@@ -147,7 +147,7 @@ input[type=text],input[type=tel],input[type=date],select,textarea{width:100%;pad
 <a class="btn wa" id="c-wa" target="_blank" rel="noopener">WhatsApp 我们</a>
 <a class="btn red" id="map" target="_blank" rel="noopener">在地图上查看</a></div></section>
 
-<footer><p id="foot"></p><p>您提供的个人详情只用于处理订单和联系取货,不用作其他用途,不泄露给第三方。</p><p id="trial" class="hide">网站试运行中,欢迎提出意见。</p></footer>
+<footer><p id="foot"></p><p>您提供的姓名和电话只用于处理订单和联系取货,不会用作其他用途,也不会公开。</p><p id="trial" class="hide">网站试运行中,欢迎提出意见。</p></footer>
 
 <a class="fab" id="wa-fab" target="_blank" rel="noopener">WhatsApp</a>
 <button class="fab" id="fb-fab">意见反馈</button>
@@ -184,9 +184,9 @@ const CONFIG={
   name:"万家香", fullName:"万家香神料店",
   slogan:"传统神料,几十年老字号",                 // 【改成你们的口号】
   intro:"烧纸、香、蜡烛等传统神料,欢迎网上预订,到店自取。",
-  whatsapp:"60105358238",                          // 【店里的 WhatsApp:60 + 号码,不加 + 和开头的 0】
-  phone:"010-535 8238",
-  address:"https://maps.app.goo.gl/VdrK9bQajktGXZZs7",
+  whatsapp:"60123456789",                          // 【店里的 WhatsApp:60 + 号码,不加 + 和开头的 0】
+  phone:"012-345 6789",
+  address:"【请填写店铺地址】, Kluang, Johor",
   hours:"【请填写营业时间】",
   ssm:"",                                          // 【SSM 注册号,填了会显示在页尾】
   trial:true,                                      // 试运行期间 true,正式推广后改 false
@@ -195,8 +195,7 @@ const CONFIG={
   qrImage:"images/duitnow.png",                    // DuitNow 二维码图片
   slots:["上午","下午","傍晚"],                      // 取货时段 (表格 settings 的 pickup_slots 可覆盖)
   scriptUrl:"",                                    // Apps Script 网址 (之后教你设置)
-  productsCsv:"https://docs.google.com/spreadsheets/d/e/2PACX-1vRw2rf_rrsyCp79iHiFsLi_eOMiseYPcz5ZSSkUAcOd2p_Jbem9kV7R9sOrY5Vkj3Fy1LXM_LTEj-Mk/pub?gid=1873806923&single=true&output=csv
-", newsCsv:"https://docs.google.com/spreadsheets/d/e/2PACX-1vRw2rf_rrsyCp79iHiFsLi_eOMiseYPcz5ZSSkUAcOd2p_Jbem9kV7R9sOrY5Vkj3Fy1LXM_LTEj-Mk/pub?gid=1357834164&single=true&output=csv", settingsCsv:"https://docs.google.com/spreadsheets/d/e/2PACX-1vRw2rf_rrsyCp79iHiFsLi_eOMiseYPcz5ZSSkUAcOd2p_Jbem9kV7R9sOrY5Vkj3Fy1LXM_LTEj-Mk/pub?gid=1447226578&single=true&output=csv", faqCsv:"https://docs.google.com/spreadsheets/d/e/2PACX-1vRw2rf_rrsyCp79iHiFsLi_eOMiseYPcz5ZSSkUAcOd2p_Jbem9kV7R9sOrY5Vkj3Fy1LXM_LTEj-Mk/pub?gid=617975209&single=true&output=csv",   // 表格发布后的 CSV 链接
+  productsCsv:"", newsCsv:"", settingsCsv:"", faqCsv:"",   // 表格发布后的 CSV 链接
   about:[
     "万家香位于柔佛居銮,是一家家庭经营的传统神料店。",
     "【请改成你们自己的故事:哪一年开业、创办人是谁、几十年来服务了哪些老顾客。】",
@@ -250,7 +249,7 @@ function renderStatic(){
  if(CONFIG.heroImage){$("hero-img").src=CONFIG.heroImage;$("hero-img").classList.remove("hide")}
  $("about-text").innerHTML=CONFIG.about.map(p=>`<p>${esc(p)}</p>`).join("");
  $("about-imgs").innerHTML=CONFIG.aboutImages.map(s=>`<img src="${esc(s)}" alt="店里照片" loading="lazy">`).join("");
- $("map").href=CONFIG.mapUrl||("https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(CONFIG.fullName+" "+CONFIG.address));
+ $("map").href="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(CONFIG.fullName+" "+CONFIG.address);
  $("foot").textContent="© "+new Date().getFullYear()+" "+CONFIG.fullName+(CONFIG.ssm?" · SSM "+CONFIG.ssm:"");
  if(CONFIG.trial)$("trial").classList.remove("hide")}
 function renderSettings(){
