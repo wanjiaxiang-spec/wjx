@@ -147,7 +147,7 @@ input[type=text],input[type=tel],input[type=date],select,textarea{width:100%;pad
 <a class="btn wa" id="c-wa" target="_blank" rel="noopener">WhatsApp 我们</a>
 <a class="btn red" id="map" target="_blank" rel="noopener">在地图上查看</a></div></section>
 
-<footer><p id="foot"></p><p>您提供的资料只用于处理订单和联系取货,不用作其他用途。</p><p id="trial" class="hide">网站试运行中,欢迎提出意见。</p></footer>
+<footer><p id="foot"></p><p>您提供的姓名和电话只用于处理订单和联系取货,不会用作其他用途,也不会公开。</p><p id="trial" class="hide">网站试运行中,欢迎提出意见。</p></footer>
 
 <a class="fab" id="wa-fab" target="_blank" rel="noopener">WhatsApp</a>
 <button class="fab" id="fb-fab">意见反馈</button>
@@ -186,9 +186,9 @@ const CONFIG={
   intro:"烧纸、香、蜡烛等传统神料,欢迎网上预订,到店自取。",
   whatsapp:"60105358238",                          // 【店里的 WhatsApp:60 + 号码,不加 + 和开头的 0】
   phone:"010-535 8238",
-  address:"5, Jln Cermai 1, Tmn Suria, 86000 Kluang, Johor",   //***
+  address:"5, Jln Cermai 1, Tmn Suria, 86000 Kluang, Johor",
   mapUrl:"https://maps.app.goo.gl/VdrK9bQajktGXZZs7",   // Google 地图分享链接,会显示在联系我们里
-  hours:"【请填写营业时间】",
+  hours:"",
   ssm:"",                                          // 【SSM 注册号,填了会显示在页尾】
   trial:true,                                      // 试运行期间 true,正式推广后改 false
   heroImage:"",                                    // 例如 "images/shop.jpg"
@@ -196,7 +196,10 @@ const CONFIG={
   qrImage:"images/duitnow.png",                    // DuitNow 二维码图片
   slots:["上午","下午","傍晚"],                      // 取货时段 (表格 settings 的 pickup_slots 可覆盖)
   scriptUrl:"",                                    // Apps Script 网址 (之后教你设置)
-  productsCsv:"https://docs.google.com/spreadsheets/d/e/2PACX-1vRw2rf_rrsyCp79iHiFsLi_eOMiseYPcz5ZSSkUAcOd2p_Jbem9kV7R9sOrY5Vkj3Fy1LXM_LTEj-Mk/pub?gid=1873806923&single=true&output=csv", newsCsv:"", settingsCsv:"", faqCsv:"",   // 表格发布后的 CSV 链接
+  productsCsv:"https://docs.google.com/spreadsheets/d/e/2PACX-1vRw2rf_rrsyCp79iHiFsLi_eOMiseYPcz5ZSSkUAcOd2p_Jbem9kV7R9sOrY5Vkj3Fy1LXM_LTEj-Mk/pub?gid=1873806923&single=true&output=csv",
+  newsCsv:"https://docs.google.com/spreadsheets/d/e/2PACX-1vRw2rf_rrsyCp79iHiFsLi_eOMiseYPcz5ZSSkUAcOd2p_Jbem9kV7R9sOrY5Vkj3Fy1LXM_LTEj-Mk/pub?gid=1357834164&single=true&output=csv",
+  settingsCsv:"https://docs.google.com/spreadsheets/d/e/2PACX-1vRw2rf_rrsyCp79iHiFsLi_eOMiseYPcz5ZSSkUAcOd2p_Jbem9kV7R9sOrY5Vkj3Fy1LXM_LTEj-Mk/pub?gid=1447226578&single=true&output=csv",
+  faqCsv:"https://docs.google.com/spreadsheets/d/e/2PACX-1vRw2rf_rrsyCp79iHiFsLi_eOMiseYPcz5ZSSkUAcOd2p_Jbem9kV7R9sOrY5Vkj3Fy1LXM_LTEj-Mk/pub?gid=617975209&single=true&output=csv",   // 表格发布后的 CSV 链接
   about:[
     "万家香位于柔佛居銮,是一家家庭经营的传统神料店。",
     "【请改成你们自己的故事:哪一年开业、创办人是谁、几十年来服务了哪些老顾客。】",
@@ -243,6 +246,7 @@ const paused=()=>/^(yes|y|是|true)$/i.test(S.pause_orders||"");
 const lunarDay=()=>{try{return parseInt(new Intl.DateTimeFormat("en-u-ca-chinese",{day:"numeric"}).formatToParts(new Date()).find(x=>x.type==="day").value,10)}catch(e){return 0}};
 const toast=t=>{const e=$("toast");e.textContent=t;e.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display="none",1500)};
 
+const mapHref=()=>CONFIG.mapUrl||("https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(CONFIG.fullName+" "+CONFIG.address));
 function renderStatic(){
  document.title=CONFIG.fullName;$("nav-name").textContent=CONFIG.name;$("sign").textContent=CONFIG.name;
  $("slogan").textContent=CONFIG.slogan;$("intro").textContent=CONFIG.intro;
@@ -250,11 +254,11 @@ function renderStatic(){
  if(CONFIG.heroImage){$("hero-img").src=CONFIG.heroImage;$("hero-img").classList.remove("hide")}
  $("about-text").innerHTML=CONFIG.about.map(p=>`<p>${esc(p)}</p>`).join("");
  $("about-imgs").innerHTML=CONFIG.aboutImages.map(s=>`<img src="${esc(s)}" alt="店里照片" loading="lazy">`).join("");
- $("map").href="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(CONFIG.fullName+" "+CONFIG.address);
+ $("map").href=mapHref();
  $("foot").textContent="© "+new Date().getFullYear()+" "+CONFIG.fullName+(CONFIG.ssm?" · SSM "+CONFIG.ssm:"");
  if(CONFIG.trial)$("trial").classList.remove("hide")}
 function renderSettings(){
- $("contact-list").innerHTML=`<dt>电话</dt><dd><a href="tel:${esc(CONFIG.phone.replace(/[^\d+]/g,""))}">${esc(CONFIG.phone)}</a></dd><dt>WhatsApp</dt><dd><a href="${wa()}" target="_blank" rel="noopener">${esc(CONFIG.phone)}</a></dd><dt>地址</dt><dd>${esc(CONFIG.address)}</dd><dt>营业时间</dt><dd>${esc(CONFIG.hours)}${S.hours_note?"<br><b>"+esc(S.hours_note)+"</b>":""}</dd>`;
+ $("contact-list").innerHTML=`<dt>电话</dt><dd><a href="tel:${esc(CONFIG.phone.replace(/[^\d+]/g,""))}">${esc(CONFIG.phone)}</a></dd><dt>WhatsApp</dt><dd><a href="${wa()}" target="_blank" rel="noopener">${esc(CONFIG.phone)}</a></dd><dt>地址</dt><dd><a href="${esc(mapHref())}" target="_blank" rel="noopener">${esc(CONFIG.address)}</a></dd>${CONFIG.hours||S.hours_note?`<dt>营业时间</dt><dd>${esc(CONFIG.hours)}${S.hours_note?(CONFIG.hours?"<br>":"")+"<b>"+esc(S.hours_note)+"</b>":""}</dd>`:""}`;
  const sl=list(S.pickup_slots).length?list(S.pickup_slots):CONFIG.slots;
  $("f-slot").innerHTML=sl.map(x=>`<option>${esc(x)}</option>`).join("");
  $("f-date").min=TODAY;
@@ -274,6 +278,7 @@ function group(rows){const m=new Map();let last={};
 function renderProducts(){
  const g=$("grid");
  if(P===null){P=[];g.innerHTML='<p class="msg">商品暂时载入不了,请直接 WhatsApp 询问我们。</p>';return}
+ if(!P.length){g.className="grid";g.innerHTML='<p class="msg">商品更新中,请直接 WhatsApp 询问我们。</p>';$("chips").innerHTML="";$("uses-wrap").classList.add("hide");return}
  const uses=[...new Set(P.flatMap(x=>list(x.use)))].filter(u=>u&&u!=="通用");
  $("uses-wrap").classList.toggle("hide",!uses.length);
  const obj=uses.filter(u=>u==="拜神"||u==="拜祖先"),fs=uses.filter(u=>!obj.includes(u));
@@ -349,7 +354,7 @@ function receipt(o){
  $("receipt").innerHTML=`<h3>订单确认</h3><p class="small" style="margin:0">这是订单确认,不是正式发票或收据,正式收据取货时由店里开出。</p>
  <p class="small">订单编号</p><div class="no">${esc(o.no)}</div>
  ${o.synced||!CONFIG.scriptUrl?"":`<div class="warn">订单暂时没能记录到系统。请务必点下面的按钮把订单发到 WhatsApp,店里以 WhatsApp 为准。</div>`}
- <p>${esc(o.name)} · ${esc(o.phone)}</p><p>取货:<b>${esc(o.date)} ${esc(o.slot)}</b><br><span class="small">${esc(CONFIG.address)}<br>营业时间:${esc(CONFIG.hours)}</span></p>
+ <p>${esc(o.name)} · ${esc(o.phone)}</p><p>取货:<b>${esc(o.date)} ${esc(o.slot)}</b><br><span class="small">${esc(CONFIG.address)}${CONFIG.hours?"<br>营业时间:"+esc(CONFIG.hours):""}</span></p>
  <table>${o.l.map(x=>`<tr><td>${esc(x.name)} ${esc(x.unit)} × ${x.q}</td><td>${money(x.sub)}</td></tr>`).join("")}<tr><td><b>总额</b></td><td><b>${money(o.total)}</b></td></tr></table>
  ${o.note?`<p class="small">备注:${esc(o.note)}</p>`:""}${qr}
  <a class="btn wa" style="width:100%;text-align:center" href="${wa(txt)}" target="_blank" rel="noopener">发送订单到 WhatsApp</a>
