@@ -8,26 +8,6 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='16' fill='%239E1D18'/%3E%3Ctext x='50' y='72' font-size='64' text-anchor='middle' fill='%23D4A63A'%3E香%3C/text%3E%3C/svg%3E">
 <title>万家香神料店</title>
 <style>
-  /* 店铺自定义公告浮窗样式 */
-.hero-notice-badge {
-  position: absolute;
-  top: 20px;
-  right: 30px;
-  background: rgba(180, 40, 40, 0.85);
-  color: #fff;
-  border: 1px solid #ffd700;
-  padding: 10px 18px;
-  border-radius: 8px;
-  font-size: 14px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  z-index: 10;
-  max-width: 320px;
-  line-height: 1.5;
-}
-.hero-notice-badge b {
-  color: #ffd700;
-  margin-right: 4px;
-}
 :root{--red:#9E1D18;--red-d:#7A1410;--gold:#D4A63A;--ink:#2A2421;--ash:#F2F0ED;--line:#D9D4CE;--mute:#6b625b}
 *{box-sizing:border-box;margin:0}
 html{scroll-behavior:smooth;scroll-padding-top:64px}
@@ -149,12 +129,8 @@ input[type=text],input[type=tel],input[type=date],select,textarea{width:100%;pad
 <button class="nb" id="cart-btn">购物车 (<span id="cart-n">0</span>)</button>
 <button class="nb" id="menu-btn" aria-label="菜单">菜单</button></div></nav>
 
-<header class="hero" style="position: relative;">
-<div id="hero-notice"></div>
-<div class="wrap">
-<div class="sign-img-box" style="flex-shrink:0;">
-  <img src="https://raw.githubusercontent.com/wanjiaxiang-spec/wjx/main/images/head logo.jpeg" alt="万家香招牌" style="width:180px;height:auto;display:block;filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));">
-</div>
+<header class="hero"><div class="wrap">
+<div class="sign" id="sign" aria-hidden="true"></div>
 <div class="hero-t"><h1 id="slogan"></h1><p id="intro"></p>
 <a class="btn fill" href="#products">看看商品</a><a class="btn" id="hero-wa" target="_blank" rel="noopener">WhatsApp 询问</a>
 <img id="hero-img" class="hide" alt="店里照片"></div></div></header>
@@ -301,27 +277,14 @@ function renderSlots(){const sl=list(S.pickup_slots).length?list(S.pickup_slots)
  el.innerHTML=sl.map(x=>{const m=slotMin(x);return `<option${today&&m!==null&&m<lim?" disabled":""}>${esc(x)}</option>`}).join("");
  if([...el.options].some(o=>o.value===keep&&!o.disabled))el.value=keep;else{const f=[...el.options].find(o=>!o.disabled);if(f)el.value=f.value}}
 function renderSettings(){
-  const hrs=CONFIG.hours||S.hours_note;
-  $("contact-list").innerHTML=`<dt>电话</dt><dd><a href="tel:${esc(CONFIG.phone.replace(/[^\d+]/g,""))}">${esc(CONFIG.phone)}</a></dd><dt>WhatsApp</dt><dd><a href="${wa()}" target="_blank" rel="noopener">${esc(CONFIG.phone)}</a></dd><dt>地址</dt><dd><a href="${esc(mapHref())}" target="_blank" rel="noopener">${esc(CONFIG.address)}</a></dd>`+(hrs?`<dt>营业时间</dt><dd>${esc(CONFIG.hours)}${S.hours_note?(CONFIG.hours?"<br>":"")+"<b>"+esc(S.hours_note)+"</b>":""}</dd>`:"");
-  const [mn,mx]=dayRange();$("f-date").min=mn;$("f-date").max=mx;renderSlots();
-  
-  let t="",link="";const a=S.banner_start||"",b=S.banner_end||"";
-  if(S.banner_text&&(!a||TODAY>=a)&&(!b||TODAY<=b)){t=S.banner_text;link=S.banner_link||""}
-  
-  /* --- 新增：把 Sheet 里的通告同步渲染到右侧浮窗 --- */
-  const noticeBox = $("hero-notice");
-  if (noticeBox) {
-    if (t) {
-      noticeBox.innerHTML = `<div class="hero-notice-badge"><b>📌 店铺公告：</b>${esc(t)}</div>`;
-    } else {
-      noticeBox.innerHTML = "";
-    }
-  }
-  /* --------------------------------------------- */
-
-  const ln=lunarNote();if(ln)t=t?t+"  |  "+ln:ln;
-  const bn=$("banner");bn.textContent=t;bn.classList.toggle("hide",!t);bn.classList.toggle("link",!!link);bn.dataset.link=link;
-  const p=$("pause");p.textContent=S.pause_message||"暂时停止接单,请直接 WhatsApp 询问我们。";p.classList.toggle("hide",!paused())}
+ const hrs=CONFIG.hours||S.hours_note;
+ $("contact-list").innerHTML=`<dt>电话</dt><dd><a href="tel:${esc(CONFIG.phone.replace(/[^\d+]/g,""))}">${esc(CONFIG.phone)}</a></dd><dt>WhatsApp</dt><dd><a href="${wa()}" target="_blank" rel="noopener">${esc(CONFIG.phone)}</a></dd><dt>地址</dt><dd><a href="${esc(mapHref())}" target="_blank" rel="noopener">${esc(CONFIG.address)}</a></dd>`+(hrs?`<dt>营业时间</dt><dd>${esc(CONFIG.hours)}${S.hours_note?(CONFIG.hours?"<br>":"")+"<b>"+esc(S.hours_note)+"</b>":""}</dd>`:"");
+ const [mn,mx]=dayRange();$("f-date").min=mn;$("f-date").max=mx;renderSlots();
+ let t="",link="";const a=S.banner_start||"",b=S.banner_end||"";
+ if(S.banner_text&&(!a||TODAY>=a)&&(!b||TODAY<=b)){t=S.banner_text;link=S.banner_link||""}
+ const ln=lunarNote();if(ln)t=t?t+"  |  "+ln:ln;
+ const bn=$("banner");bn.textContent=t;bn.classList.toggle("hide",!t);bn.classList.toggle("link",!!link);bn.dataset.link=link;
+ const p=$("pause");p.textContent=S.pause_message||"暂时停止接单,请直接 WhatsApp 询问我们。";p.classList.toggle("hide",!paused())}
 
 function group(rows){const m=new Map();let last={};
  rows.forEach(r=>{if(r.name)last={name:r.name,category:r.category,use:r.use,description:r.description,image:r.image};else if(last.name)r={...r,name:last.name,category:last.category,use:last.use,description:last.description,image:last.image};
