@@ -123,6 +123,7 @@ input[type=text],input[type=tel],input[type=date],select,textarea{width:100%;pad
 <div id="banner" class="hide"></div>
 <nav><div class="wrap"><b id="nav-name"></b>
 <ul id="menu"><li><a href="#about">关于我们</a></li><li><a href="#products">商品</a></li><li><a href="#news">最新消息</a></li><li><a href="#faq">常见问题</a></li><li><a href="#contact">联系我们</a></li></ul>
+<button class="nb" id="orders-btn">我的订单</button>
 <button class="nb" id="cart-btn">购物车 (<span id="cart-n">0</span>)</button>
 <button class="nb" id="menu-btn" aria-label="菜单">菜单</button></div></nav>
 
@@ -172,6 +173,7 @@ input[type=text],input[type=tel],input[type=date],select,textarea{width:100%;pad
 <button class="btn red" id="submit" style="width:100%;margin-top:14px;font-size:19px">提交订单</button>
 </form></div></div>
 <div id="receipt" class="rcpt hide"></div>
+<div id="history" class="rcpt hide"></div>
 </div></div>
 
 <div id="fb"><div class="panel"><h3>意见反馈</h3><p class="small" style="margin:0 0 8px">网页哪里不好用、哪里看不懂,请告诉我们。</p>
@@ -243,10 +245,14 @@ const list=s=>String(s||"").split(/[,\uff0c、;\s]+/).map(x=>x.trim()).filter(Bo
 
 let P=[],S={},cat="",use="",fes="",showAll=false,cart=store.get("wjx_cart",[]);
 const paused=()=>/^(yes|y|是|true)$/i.test(S.pause_orders||"");
-const lunarDay=()=>{try{return parseInt(new Intl.DateTimeFormat("en-u-ca-chinese",{day:"numeric"}).formatToParts(new Date()).find(x=>x.type==="day").value,10)}catch(e){return 0}};
+const LUNAR_AHEAD=2; // 初一、十五前几天开始提醒(2 = 前两天;今天也算)
+const KL="Asia/Kuala_Lumpur";
+const lunarOn=n=>{try{return parseInt(new Intl.DateTimeFormat("en-u-ca-chinese",{day:"numeric",timeZone:KL}).formatToParts(new Date(Date.now()+n*864e5)).find(x=>x.type==="day").value,10)}catch(e){return 0}};
+const lunarNote=()=>{for(let n=0;n<=LUNAR_AHEAD;n++){const d=lunarOn(n);if(d===1||d===15){const nm="农历"+(d===1?"初一":"十五");
+ const md=new Date(Date.now()+n*864e5).toLocaleDateString("zh-CN",{month:"long",day:"numeric",timeZone:KL});
+ return n===0?"今天是"+nm+",欢迎到店或网上预订。":(n===1?"明天":"后天")+"是"+nm+"("+md+"),欢迎提前网上预订,到店自取。"}}return""};
 const toast=t=>{const e=$("toast");e.textContent=t;e.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display="none",1500)};
 
-const mapHref=()=>CONFIG.mapUrl||("https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(CONFIG.fullName+" "+CONFIG.address));
 function renderStatic(){
  document.title=CONFIG.fullName;$("nav-name").textContent=CONFIG.name;$("sign").textContent=CONFIG.name;
  $("slogan").textContent=CONFIG.slogan;$("intro").textContent=CONFIG.intro;
@@ -254,17 +260,17 @@ function renderStatic(){
  if(CONFIG.heroImage){$("hero-img").src=CONFIG.heroImage;$("hero-img").classList.remove("hide")}
  $("about-text").innerHTML=CONFIG.about.map(p=>`<p>${esc(p)}</p>`).join("");
  $("about-imgs").innerHTML=CONFIG.aboutImages.map(s=>`<img src="${esc(s)}" alt="店里照片" loading="lazy">`).join("");
- $("map").href=mapHref();
+ $("map").href="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(CONFIG.fullName+" "+CONFIG.address);
  $("foot").textContent="© "+new Date().getFullYear()+" "+CONFIG.fullName+(CONFIG.ssm?" · SSM "+CONFIG.ssm:"");
  if(CONFIG.trial)$("trial").classList.remove("hide")}
 function renderSettings(){
- $("contact-list").innerHTML=`<dt>电话</dt><dd><a href="tel:${esc(CONFIG.phone.replace(/[^\d+]/g,""))}">${esc(CONFIG.phone)}</a></dd><dt>WhatsApp</dt><dd><a href="${wa()}" target="_blank" rel="noopener">${esc(CONFIG.phone)}</a></dd><dt>地址</dt><dd><a href="${esc(mapHref())}" target="_blank" rel="noopener">${esc(CONFIG.address)}</a></dd>${CONFIG.hours||S.hours_note?`<dt>营业时间</dt><dd>${esc(CONFIG.hours)}${S.hours_note?(CONFIG.hours?"<br>":"")+"<b>"+esc(S.hours_note)+"</b>":""}</dd>`:""}`;
+ $("contact-list").innerHTML=`<dt>电话</dt><dd><a href="tel:${esc(CONFIG.phone.replace(/[^\d+]/g,""))}">${esc(CONFIG.phone)}</a></dd><dt>WhatsApp</dt><dd><a href="${wa()}" target="_blank" rel="noopener">${esc(CONFIG.phone)}</a></dd><dt>地址</dt><dd>${esc(CONFIG.address)}</dd><dt>营业时间</dt><dd>${esc(CONFIG.hours)}${S.hours_note?"<br><b>"+esc(S.hours_note)+"</b>":""}</dd>`;
  const sl=list(S.pickup_slots).length?list(S.pickup_slots):CONFIG.slots;
  $("f-slot").innerHTML=sl.map(x=>`<option>${esc(x)}</option>`).join("");
  $("f-date").min=TODAY;
  let t="",link="";const a=S.banner_start||"",b=S.banner_end||"";
  if(S.banner_text&&(!a||TODAY>=a)&&(!b||TODAY<=b)){t=S.banner_text;link=S.banner_link||""}
- else{const d=lunarDay();if(d===1||d===15)t="今天是农历"+(d===1?"初一":"十五")+",欢迎到店或网上预订。"}
+ const ln=lunarNote();if(ln)t=t?t+"  |  "+ln:ln
  const bn=$("banner");bn.textContent=t;bn.classList.toggle("hide",!t);bn.classList.toggle("link",!!link);bn.dataset.link=link;
  const p=$("pause");p.textContent=S.pause_message||"暂时停止接单,请直接 WhatsApp 询问我们。";p.classList.toggle("hide",!paused())}
 
@@ -278,7 +284,6 @@ function group(rows){const m=new Map();let last={};
 function renderProducts(){
  const g=$("grid");
  if(P===null){P=[];g.innerHTML='<p class="msg">商品暂时载入不了,请直接 WhatsApp 询问我们。</p>';return}
- if(!P.length){g.className="grid";g.innerHTML='<p class="msg">商品更新中,请直接 WhatsApp 询问我们。</p>';$("chips").innerHTML="";$("uses-wrap").classList.add("hide");return}
  const uses=[...new Set(P.flatMap(x=>list(x.use)))].filter(u=>u&&u!=="通用");
  $("uses-wrap").classList.toggle("hide",!uses.length);
  const obj=uses.filter(u=>u==="拜神"||u==="拜祖先"),fs=uses.filter(u=>!obj.includes(u));
@@ -320,7 +325,7 @@ const sv=()=>{store.set("wjx_cart",cart);$("cart-n").textContent=cart.reduce((a,
 function renderCart(){const l=lines(),box=$("lines");
  box.innerHTML=l.length?l.map(x=>`<div class="line"><div><b>${esc(x.name)}</b> ${esc(x.unit)}<br><span class="small">${money(x.price)}${x.out?" · 已缺货,请删除":""}</span></div><div class="qty"><button data-q="${esc(x.id)}" data-d="-1" aria-label="减少">−</button><span>${x.q}</span><button data-q="${esc(x.id)}" data-d="1" aria-label="增加">+</button></div></div>`).join(""):'<p class="msg">购物车是空的,先去挑选商品吧。</p>';
  $("co").classList.toggle("hide",!l.length);$("sum").textContent=money(l.reduce((a,x)=>a+x.sub,0))}
-function openCart(){$("cartview").classList.remove("hide");$("receipt").classList.add("hide");renderCart();
+function openCart(){$("cartview").classList.remove("hide");$("receipt").classList.add("hide");$("history").classList.add("hide");renderCart();
  const me=store.get("wjx_me",{});$("f-name").value=$("f-name").value||me.name||"";$("f-phone").value=$("f-phone").value||me.phone||"";
  $("drawer").classList.add("open")}
 
@@ -337,30 +342,48 @@ async function submit(e){e.preventDefault();
  if(!$("f-ok").checked)return alert("请先勾选同意取货与退款规则。");
  const btn=$("submit");btn.disabled=true;btn.textContent="提交中……";
  const local=l.reduce((a,x)=>a+x.sub,0);let no="",total=local,synced=false;
+ const rid=Date.now().toString(36)+Math.random().toString(36).slice(2,8);
  if(CONFIG.scriptUrl){try{
-  const r=await fetch(CONFIG.scriptUrl,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({type:"order",name,phone,date,slot,pay,note,items:l.map(x=>({id:x.id,qty:x.q}))})});
+  const r=await fetch(CONFIG.scriptUrl,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({type:"order",rid,name,phone,date,slot,pay,note,items:l.map(x=>({id:x.id,qty:x.q}))})});
   const j=await r.json();
   if(j.ok){no=j.order_no;total=j.total;synced=true}
   else if(j.error){alert(j.error);btn.disabled=false;btn.textContent="提交订单";return}
  }catch(_){}}
  if(!no)no="T"+TODAY.replace(/-/g,"")+"-"+Math.floor(100+Math.random()*900);
  store.set("wjx_me",{name,phone});
- receipt({no,name,phone,date,slot,pay,note,l,total,synced});
+ const ord={no,name,phone,date,slot,pay,note,l,total,synced};saveHist(ord);
+ receipt(ord);
  cart=[];sv();renderProducts();btn.disabled=false;btn.textContent="提交订单";$("f-ok").checked=false}
 
+const orderText=o=>`【${CONFIG.name} 网上订单】\n订单编号:${o.no}\n姓名:${o.name}\n电话:${o.phone}\n取货:${o.date} ${o.slot}\n付款:${o.pay}\n\n`+o.l.map(x=>`${x.name} ${x.unit} x${x.q} (${money(x.sub)})`).join("\n")+`\n\n总额:${money(o.total)}`+(o.note?`\n备注:${o.note}`:"")+(o.pay==="转账"?"\n我会转账后发付款截图。":"\n我会取货时在店里付款。");
 function receipt(o){
- const txt=`【${CONFIG.name} 网上订单】\n订单编号:${o.no}\n姓名:${o.name}\n电话:${o.phone}\n取货:${o.date} ${o.slot}\n付款:${o.pay}\n\n`+o.l.map(x=>`${x.name} ${x.unit} x${x.q} (${money(x.sub)})`).join("\n")+`\n\n总额:${money(o.total)}`+(o.note?`\n备注:${o.note}`:"")+(o.pay==="转账"?"\n我会转账后发付款截图。":"\n我会取货时在店里付款。");
+ const txt=orderText(o);
+ $("history").classList.add("hide");
  const qr=o.pay==="转账"&&CONFIG.qrImage?`<p><b>请用 DuitNow 转账 ${money(o.total)}</b>,备注填订单编号,转账后把截图发到 WhatsApp。</p><img class="qr" src="${esc(CONFIG.qrImage)}" alt="DuitNow 二维码" onerror="this.remove()">`:o.pay==="转账"?`<p><b>请转账 ${money(o.total)}</b>,备注填订单编号,转账后把截图发到 WhatsApp。</p>`:`<p>取货时在店里付款。</p>`;
  $("receipt").innerHTML=`<h3>订单确认</h3><p class="small" style="margin:0">这是订单确认,不是正式发票或收据,正式收据取货时由店里开出。</p>
  <p class="small">订单编号</p><div class="no">${esc(o.no)}</div>
  ${o.synced||!CONFIG.scriptUrl?"":`<div class="warn">订单暂时没能记录到系统。请务必点下面的按钮把订单发到 WhatsApp,店里以 WhatsApp 为准。</div>`}
- <p>${esc(o.name)} · ${esc(o.phone)}</p><p>取货:<b>${esc(o.date)} ${esc(o.slot)}</b><br><span class="small">${esc(CONFIG.address)}${CONFIG.hours?"<br>营业时间:"+esc(CONFIG.hours):""}</span></p>
+ <p>${esc(o.name)} · ${esc(o.phone)}</p><p>取货:<b>${esc(o.date)} ${esc(o.slot)}</b><br><span class="small">${esc(CONFIG.address)}<br>营业时间:${esc(CONFIG.hours)}</span></p>
  <table>${o.l.map(x=>`<tr><td>${esc(x.name)} ${esc(x.unit)} × ${x.q}</td><td>${money(x.sub)}</td></tr>`).join("")}<tr><td><b>总额</b></td><td><b>${money(o.total)}</b></td></tr></table>
  ${o.note?`<p class="small">备注:${esc(o.note)}</p>`:""}${qr}
  <a class="btn wa" style="width:100%;text-align:center" href="${wa(txt)}" target="_blank" rel="noopener">发送订单到 WhatsApp</a>
  <button type="button" class="btn" style="width:100%;margin-top:8px;color:var(--ink);border-color:#999" onclick="window.print()">下载订单确认 (存成 PDF)</button>
  <p class="small">取货时请报订单编号和电话后四位。订单保留到取货日期的第二天打烊前。请截图保存本页。</p>`;
  $("cartview").classList.add("hide");$("receipt").classList.remove("hide");$("drawer").querySelector(".panel").scrollTop=0}
+
+/* 我的订单(只存在这台设备的浏览器里) */
+const HK="wjx_orders";
+const saveHist=o=>{const h=store.get(HK,[]);h.unshift({no:o.no,name:o.name,phone:o.phone,date:o.date,slot:o.slot,pay:o.pay,note:o.note,total:o.total,synced:o.synced,ts:Date.now(),l:o.l.map(x=>({name:x.name,unit:x.unit,q:x.q,sub:x.sub}))});store.set(HK,h.slice(0,30))};
+function openHistory(){const h=store.get(HK,[]);
+ $("cartview").classList.add("hide");$("receipt").classList.add("hide");$("history").classList.remove("hide");
+ $("history").innerHTML=`<h3>我的订单</h3><p class="small">订单只保存在这台手机或电脑的浏览器里,换设备或清除浏览数据就没有了。是否已取货,请以店里为准。</p>`+
+ (h.length?h.map(o=>`<details style="margin:8px 0"><summary><b>${esc(o.no)}</b> · 取货 ${esc(o.date)} · ${money(o.total)}</summary>
+ ${o.synced?"":`<div class="warn">这张订单没能记录到系统,请确认已把订单发到 WhatsApp。</div>`}
+ <p class="small">${esc(o.name)} · ${esc(o.phone)} · ${esc(o.slot)} · ${esc(o.pay)}</p>
+ <table>${o.l.map(x=>`<tr><td>${esc(x.name)} ${esc(x.unit)} × ${x.q}</td><td>${money(x.sub)}</td></tr>`).join("")}<tr><td><b>总额</b></td><td><b>${money(o.total)}</b></td></tr></table>
+ <a class="btn wa" style="width:100%;text-align:center" href="${wa(orderText(o))}" target="_blank" rel="noopener">再发一次到 WhatsApp</a></details>`).join(""):'<p class="msg">还没有订单记录。</p>')+
+ `<button type="button" class="btn" id="hist-back" style="width:100%;margin-top:10px;color:var(--ink);border-color:#999">返回购物车</button>`+(h.length?`<button type="button" class="btn" id="hist-clear" style="width:100%;margin-top:8px;color:var(--ink);border-color:#999">清除这些记录</button>`:"");
+ $("drawer").classList.add("open");$("drawer").querySelector(".panel").scrollTop=0}
 
 async function sendFb(){const m=$("fb-text").value.trim(),c=$("fb-c").value.trim();if(!m)return;
  let ok=false;if(CONFIG.scriptUrl){try{const r=await fetch(CONFIG.scriptUrl,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({type:"feedback",message:m,contact:c})});ok=(await r.json()).ok}catch(_){}}
@@ -375,7 +398,9 @@ document.addEventListener("click",e=>{const t=e.target;
  if(t.dataset.v){P[t.dataset.g].sel=+t.dataset.v;renderProducts()}
  if(t.dataset.add){const c=cart.find(x=>x.id===t.dataset.add);c?c.q++:cart.push({id:t.dataset.add,q:1});sv();toast("已加入购物车")}
  if(t.dataset.q){const c=cart.find(x=>x.id===t.dataset.q);if(c){c.q+=+t.dataset.d;if(c.q<1)cart=cart.filter(x=>x!==c)}sv();renderCart()}
- if(t.closest("#cart-btn"))openCart();
+ if(t.closest("#cart-btn")||t.id==="hist-back")openCart();
+ if(t.closest("#orders-btn"))openHistory();
+ if(t.id==="hist-clear"&&confirm("确定清除这台设备上的订单记录吗?(不影响店里的订单)")){store.set(HK,[]);openHistory()}
  if(t.id==="close-d"||t.id==="drawer")$("drawer").classList.remove("open");
  if(t.closest("#menu-btn"))$("menu").classList.toggle("open");
  if(t.closest("#menu a"))$("menu").classList.remove("open");
@@ -387,6 +412,13 @@ document.addEventListener("change",e=>{if(e.target.id==="fes-sel"){fes=e.target.
 $("form").addEventListener("submit",submit);
 
 renderStatic();renderSettings();sv();
+// 同一浏览器开了多个分页/页面时,购物车改动要同步,不然图标数字会过期
+const syncCart=()=>{cart=store.get("wjx_cart",[]);$("cart-n").textContent=cart.reduce((a,c)=>a+c.q,0);
+ try{renderProducts()}catch(e){}
+ if($("drawer").classList.contains("open")&&!$("cartview").classList.contains("hide"))try{renderCart()}catch(e){}};
+addEventListener("storage",e=>{if(e.key==="wjx_cart")syncCart()});
+addEventListener("pageshow",syncCart);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)syncCart()});
 (async()=>{
  const [s,p,n,f]=await Promise.all([load(CONFIG.settingsCsv,SAMPLE.settings),load(CONFIG.productsCsv,SAMPLE.products),load(CONFIG.newsCsv,SAMPLE.news),load(CONFIG.faqCsv,SAMPLE.faq)]);
  S=Object.fromEntries((s||[]).map(r=>[r.key,r.value]));renderSettings();
