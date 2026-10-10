@@ -18,12 +18,12 @@ button,input,select,textarea{font:inherit;color:inherit}
 :focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .hide{display:none!important}
 .msg{color:var(--mute);padding:20px 0;text-align:center;grid-column:1/-1}
-/* 公告卡片:叠在首页大图的右边(电脑);手机或窄屏会自动排到文字下面 */
+#topbar{background:var(--gold);color:var(--ink);text-align:center;padding:8px 16px;font-weight:700}
+/* sheet 公告卡片:叠在首页背景的右边(电脑);手机或窄屏会自动排到文字下面 */
 #banner{flex:0 0 100%;max-width:none;background:rgba(255,255,255,.95);color:var(--ink);border:2px solid var(--gold);border-radius:10px;padding:12px 16px;box-shadow:0 4px 14px rgba(0,0,0,.35)}
-.n-item+.n-item{border-top:1px dashed var(--line);margin-top:8px;padding-top:8px}
-.n-item b{display:block;color:var(--red);font-size:15px;line-height:1.4}
-.n-item p{margin:0;font-size:17px;line-height:1.6}
-.n-item.link{cursor:pointer}.n-item.link p{text-decoration:underline}
+#banner b{display:block;color:var(--red);font-size:15px;line-height:1.4}
+#banner p{margin:0;font-size:17px;line-height:1.6;color:var(--ink)}
+#banner.link{cursor:pointer}#banner.link p{text-decoration:underline}
 @media(min-width:1000px){.hero .wrap{flex-wrap:nowrap}.hero-t{flex:1 1 0;min-width:0}#banner{flex:0 0 270px;margin-left:auto}}
 nav{position:sticky;top:0;z-index:5;background:var(--red-d);color:#fff}
 nav .wrap{display:flex;align-items:center;gap:8px;height:56px}
@@ -35,8 +35,7 @@ nav a{display:block;color:#fff;text-decoration:none;padding:8px 10px;font-size:1
 @media(max-width:640px){#menu-btn{display:block}nav ul{display:none;position:absolute;top:56px;left:0;right:0;background:var(--red-d);flex-direction:column}nav ul.open{display:flex}}
 .hero{background:linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)),url('https://raw.githubusercontent.com/wanjiaxiang-spec/wjx/main/images/店门口.png') center/cover no-repeat;color:#fff;padding:48px 0}
 .hero .wrap{display:flex;gap:36px;align-items:center;justify-content:flex-start;flex-wrap:wrap;position:relative}
-.sign{writing-mode:vertical-rl;font:700 clamp(60px,16vw,104px) "Songti SC","STSong","Noto Serif SC",serif;letter-spacing:.18em;color:var(--gold);border:3px solid var(--gold);padding:22px 12px;line-height:1.1}
-.hero img.sign-img{display:block;height:clamp(150px,26vw,230px);width:auto;max-width:min(100%,260px);margin:0;border:0;object-fit:contain;flex:none}
+.hero img.sign-img{display:block;height:clamp(170px,30vw,300px);width:auto;max-width:min(100%,320px);margin:0;border:0;object-fit:contain;flex:none;filter:drop-shadow(0 4px 10px rgba(0,0,0,.35))}
 .hero-t{max-width:420px}
 .hero h1{font-size:30px;margin-bottom:10px}
 .hero p{margin-bottom:20px}
@@ -129,6 +128,7 @@ input[type=text],input[type=tel],input[type=date],select,textarea{width:100%;pad
 </head>
 <body>
 
+<div id="topbar" class="hide"></div>
 <nav><div class="wrap"><b id="nav-name"></b>
 <ul id="menu"><li><a href="#about">关于我们</a></li><li><a href="#products">商品</a></li><li><a href="#news">最新消息</a></li><li><a href="#faq">常见问题</a></li><li><a href="#contact">联系我们</a></li></ul>
 <button class="nb" id="cart-btn">购物车 (<span id="cart-n">0</span>)</button>
@@ -136,7 +136,6 @@ input[type=text],input[type=tel],input[type=date],select,textarea{width:100%;pad
 
 <header class="hero"><div class="wrap">
   <img class="sign-img hide" id="sign-img" alt="万家香">
-  <div class="sign" id="sign" aria-hidden="true"></div>
   <div class="hero-t"><h1 id="slogan"></h1><p id="intro"></p>
   <a class="btn fill" href="#products">看看商品</a><a class="btn" id="hero-wa" target="_blank" rel="noopener">WhatsApp 询问</a>
   <img id="hero-img" class="hide" alt="店里照片"></div>
@@ -205,7 +204,7 @@ const CONFIG={
   ssm:"",
   trial:true,                                      // 试运行期间 true,正式推广后改 false
   heroImage:"",
-  signImage:"images/heaad.png",                     // 首页左边替换「万家香」框的图片;文件名要和 GitHub 里的一模一样(区分大小写)。图片加载不了会自动改回文字框
+  signImage:"images/head.png",                     // 首页左边叠在背景上的图片(透明背景 PNG);文件名要和 GitHub 里的一模一样(区分大小写)。找不到图片就不显示
   aboutImages:[],
   qrImage:"images/duitnow.png",
   slots:["09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00"],   // 取货时间 (表格 settings 的 pickup_slots 可覆盖,时间里不要有空格)
@@ -272,8 +271,8 @@ const lunarNote=()=>{for(let n=0;n<=LUNAR_AHEAD;n++){const d=lunarOn(n);if(d===1
 const toast=t=>{const e=$("toast");e.textContent=t;e.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display="none",1500)};
 
 function renderStatic(){
- document.title=CONFIG.fullName;$("nav-name").textContent=CONFIG.name;$("sign").textContent=CONFIG.name;
- {const si=$("sign-img");if(CONFIG.signImage){si.onerror=()=>{si.remove();$("sign").classList.remove("hide")};si.src=CONFIG.signImage;si.classList.remove("hide");$("sign").classList.add("hide")}}
+ document.title=CONFIG.fullName;$("nav-name").textContent=CONFIG.name;
+ {const si=$("sign-img");if(CONFIG.signImage){si.onerror=()=>si.remove();si.src=CONFIG.signImage;si.classList.remove("hide")}}
  $("slogan").textContent=CONFIG.slogan;$("intro").textContent=CONFIG.intro;
  ["hero-wa","c-wa","wa-fab"].forEach(i=>{$(i).href=wa("你好,我想询问一下。")});
  if(CONFIG.heroImage){$("hero-img").src=CONFIG.heroImage;$("hero-img").classList.remove("hide")}
@@ -292,9 +291,8 @@ function renderSettings(){
  const [mn,mx]=dayRange();$("f-date").min=mn;$("f-date").max=mx;renderSlots();
  let t="",link="";const a=S.banner_start||"",b=S.banner_end||"";
  if(S.banner_text&&(!a||TODAY>=a)&&(!b||TODAY<=b)){t=S.banner_text;link=S.banner_link||""}
- const ln=lunarNote();
- const bn=$("banner");bn.innerHTML=(t?`<div class="n-item${link?" link":""}"><b>公告</b><p>${esc(t)}</p></div>`:"")+(ln?`<div class="n-item"><b>农历提醒</b><p>${esc(ln)}</p></div>`:"");
- bn.classList.toggle("hide",!t&&!ln);bn.dataset.link=link;
+ const ln=lunarNote(),tb=$("topbar");tb.textContent=ln;tb.classList.toggle("hide",!ln);   // 农历初一十五提醒:照常在最顶部
+ const bn=$("banner");bn.innerHTML=t?`<b>公告</b><p>${esc(t)}</p>`:"";bn.classList.toggle("hide",!t);bn.classList.toggle("link",!!link);bn.dataset.link=link;   // sheet 的公告:首页右边的卡片
  const p=$("pause");p.textContent=S.pause_message||"暂时停止接单,请直接 WhatsApp 询问我们。";p.classList.toggle("hide",!paused())}
 
 function group(rows){const m=new Map();let last={};
@@ -422,7 +420,7 @@ async function sendFb(){const m=$("fb-text").value.trim(),c=$("fb-c").value.trim
 
 /* 事件 */
 document.addEventListener("click",e=>{const t=e.target;
- if(t.closest("#banner .n-item.link")&&$("banner").dataset.link){setCat($("banner").dataset.link);location.hash="#products"}
+ if(t.closest("#banner")&&$("banner").dataset.link){setCat($("banner").dataset.link);location.hash="#products"}
  {const tc=t.closest("[data-c]");if(tc)setCat(tc.dataset.c)}
  if(t.dataset.u!==undefined)setUse(t.dataset.u);
  if(t.dataset.v){P[t.dataset.g].sel=+t.dataset.v;renderProducts()}
