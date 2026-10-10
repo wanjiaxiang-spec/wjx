@@ -462,7 +462,10 @@ document.addEventListener("click",e=>{const t=e.target;
  if(t.closest("#menu a"))$("menu").classList.remove("open");
  if(t.id==="fb-fab")$("fb").classList.add("open");
  if(t.id==="fb-close"||t.id==="fb")$("fb").classList.remove("open");
- if(t.id==="fb-send")sendFb()});
+ if(t.id==="fb-send")sendFb();
+ if(t.closest("#pv-link")||t.closest(".pv-open")){e.preventDefault();$("pv").classList.add("open")}
+ if(t.id==="pv-close"||t.id==="pv")$("pv").classList.remove("open")});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")$("pv").classList.remove("open")});
 document.addEventListener("change",e=>{const t=e.target;
  if(t.classList&&t.classList.contains("sel")){P[t.dataset.g].sel=+t.value;renderProducts()}
  else if(t.id==="fes-sel"){fes=t.value;cat="";renderProducts()}
