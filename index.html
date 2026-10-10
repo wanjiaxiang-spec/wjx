@@ -260,7 +260,7 @@ function renderStatic(){
  if(CONFIG.heroImage){$("hero-img").src=CONFIG.heroImage;$("hero-img").classList.remove("hide")}
  $("about-text").innerHTML=CONFIG.about.map(p=>`<p>${esc(p)}</p>`).join("");
  $("about-imgs").innerHTML=CONFIG.aboutImages.map(s=>`<img src="${esc(s)}" alt="店里照片" loading="lazy">`).join("");
- $("map").href="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(CONFIG.fullName+" "+CONFIG.address);
+ $("map").href="https://maps.app.goo.gl/VdrK9bQajktGXZZs7"+encodeURIComponent(CONFIG.fullName+" "+CONFIG.address);
  $("foot").textContent="© "+new Date().getFullYear()+" "+CONFIG.fullName+(CONFIG.ssm?" · SSM "+CONFIG.ssm:"");
  if(CONFIG.trial)$("trial").classList.remove("hide")}
 function renderSettings(){
