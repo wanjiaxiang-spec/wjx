@@ -264,7 +264,7 @@ function renderStatic(){
  $("foot").textContent="© "+new Date().getFullYear()+" "+CONFIG.fullName+(CONFIG.ssm?" · SSM "+CONFIG.ssm:"");
  if(CONFIG.trial)$("trial").classList.remove("hide")}
 function renderSettings(){
- $("contact-list").innerHTML=`<dt>电话</dt><dd><a href="tel:${esc(CONFIG.phone.replace(/[^\d+]/g,""))}">${esc(CONFIG.phone)}</a></dd><dt>WhatsApp</dt><dd><a href="${wa()}" target="_blank" rel="noopener">${esc(CONFIG.phone)}</a></dd><dt>地址</dt><dd>${esc(CONFIG.address)}</dd><dt>营业时间</dt><dd>${esc(CONFIG.hours)}${S.hours_note?"<br><b>"+esc(S.hours_note)+"</b>":""}</dd>`;
+ $("contact-list").innerHTML=`<dt>电话</dt><dd><a href="tel:${esc(CONFIG.phone.replace(/[^\d+]/g,""))}">${esc(CONFIG.phone)}</a></dd><dt>WhatsApp</dt><dd><a href="${wa()}" target="_blank" rel="noopener">${esc(CONFIG.phone)}</a></dd><dt>地址</dt><dd><a href="https://maps.app.goo.gl/VdrK9bQajktGXZZs7" target="_blank" rel="noopener">${esc(CONFIG.address)}</a></dd><dt>营业时间</dt><dd>${esc(CONFIG.hours)}${S.hours_note?"<br><b>"+esc(S.hours_note)+"</b>":""}</dd>`;
  const sl=list(S.pickup_slots).length?list(S.pickup_slots):CONFIG.slots;
  $("f-slot").innerHTML=sl.map(x=>`<option>${esc(x)}</option>`).join("");
  $("f-date").min=TODAY;
