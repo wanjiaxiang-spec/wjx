@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="万家香神料店 · 柔佛居銮。烧纸、香、蜡烛、供品,网上预订,到店自取。">
 <meta property="og:type" content="website"><meta property="og:title" content="万家香神料店"><meta property="og:description" content="烧纸、香、蜡烛、供品,网上预订,到店自取。柔佛居銮。"><meta name="theme-color" content="#7A1410">
+<link rel="preload" as="image" href="https://raw.githubusercontent.com/wanjiaxiang-spec/wjx/main/images/店门口.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='16' fill='%239E1D18'/%3E%3Ctext x='50' y='72' font-size='64' text-anchor='middle' fill='%23D4A63A'%3E香%3C/text%3E%3C/svg%3E">
 <title>万家香神料店</title>
 <style>
@@ -20,10 +21,11 @@ button,input,select,textarea{font:inherit;color:inherit}
 .msg{color:var(--mute);padding:20px 0;text-align:center;grid-column:1/-1}
 #topbar{background:var(--gold);color:var(--ink);text-align:center;padding:8px 16px;font-weight:700}
 /* sheet 公告卡片:叠在首页背景的右边(电脑);手机或窄屏会自动排到文字下面 */
-#banner{flex:0 0 100%;max-width:none;background:rgba(255,255,255,.95);color:var(--ink);border:2px solid var(--gold);border-radius:10px;padding:12px 16px;box-shadow:0 4px 14px rgba(0,0,0,.35)}
-#banner b{display:block;color:var(--red);font-size:15px;line-height:1.4}
-#banner p{margin:0;font-size:17px;line-height:1.6;color:var(--ink)}
-#banner.link{cursor:pointer}#banner.link p{text-decoration:underline}
+#banner{flex:0 0 100%;max-width:none;display:flex;flex-direction:column;gap:10px}
+#banner .bn{background:rgba(255,255,255,.95);color:var(--ink);border:2px solid var(--gold);border-radius:10px;padding:12px 16px;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+#banner .bn b{display:block;color:var(--red);font-size:15px;line-height:1.4}
+#banner .bn p{margin:0;font-size:17px;line-height:1.6;color:var(--ink)}
+#banner .bn.link{cursor:pointer}#banner .bn.link p{text-decoration:underline}
 @media(min-width:1000px){.hero .wrap{flex-wrap:nowrap}.hero-t{flex:1 1 0;min-width:0}#banner{flex:0 0 270px;margin-left:auto}}
 nav{position:sticky;top:0;z-index:5;background:var(--red-d);color:#fff}
 nav .wrap{display:flex;align-items:center;gap:8px;height:56px}
@@ -33,7 +35,9 @@ nav a{display:block;color:#fff;text-decoration:none;padding:8px 10px;font-size:1
 .nb{background:none;border:1px solid rgba(255,255,255,.55);color:#fff;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:16px}
 #menu-btn{display:none}
 @media(max-width:640px){#menu-btn{display:block}nav ul{display:none;position:absolute;top:56px;left:0;right:0;background:var(--red-d);flex-direction:column}nav ul.open{display:flex}}
-.hero{background:linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)),url('https://raw.githubusercontent.com/wanjiaxiang-spec/wjx/main/images/店门口.png') center/cover no-repeat;color:#fff;padding:48px 0}
+.hero{position:relative;isolation:isolate;background:#3b1f1a;color:#fff;padding:48px 0;min-height:430px}
+.hero::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)),url('https://raw.githubusercontent.com/wanjiaxiang-spec/wjx/main/images/店门口.png') center/cover no-repeat;transform:translateZ(0);backface-visibility:hidden}
+#sign-img.hide{display:block!important;visibility:hidden}
 .hero .wrap{display:flex;gap:36px;align-items:center;justify-content:flex-start;flex-wrap:wrap;position:relative}
 .hero img.sign-img{display:block;height:clamp(170px,30vw,300px);width:auto;max-width:min(100%,320px);margin:0;border:0;object-fit:contain;flex:none;filter:drop-shadow(0 4px 10px rgba(0,0,0,.35))}
 .hero-t{max-width:420px}
@@ -130,6 +134,7 @@ input[type=text],input[type=tel],input[type=date],select,textarea{width:100%;pad
 .doc h4{font-size:18px;margin:16px 0 4px;color:var(--red)}
 .doc p{margin:4px 0}.doc ul{margin:4px 0 4px 1.3em}
 footer a{color:#f0d9a0}
+.en{color:#555;font-weight:400}.doc h3 .en,.doc h4 .en{font-size:.78em;display:block;margin-top:2px}.doc small.en{font-size:.78em}
 </style>
 </head>
 <body>
@@ -154,7 +159,7 @@ footer a{color:#f0d9a0}
 <div id="pause" class="pause hide"></div><div id="uses-wrap" class="hide"><p class="fl">我要买:</p><div class="chips" id="uses"></div></div><div class="chips" id="chips"></div>
 <div class="grid" id="grid"><p class="msg">正在载入商品……</p></div></div></section>
 
-<section class="alt" id="news"><div class="wrap"><h2>最新消息</h2><p class="sub"></p><div id="news-list"><p class="msg">正在载入……</p></div></div></section>
+<section class="alt" id="news"><div class="wrap"><h2>最新消息</h2><p class="sub">节日安排、营业时间、新货通知</p><div id="news-list"><p class="msg">正在载入……</p></div></div></section>
 
 <section id="faq"><div class="wrap"><h2>常见问题</h2><p class="sub">取货、付款、退款</p><div id="faq-list"></div></div></section>
 
@@ -163,7 +168,7 @@ footer a{color:#f0d9a0}
 <a class="btn wa" id="c-wa" target="_blank" rel="noopener">WhatsApp 我们</a>
 <a class="btn red" id="map" target="_blank" rel="noopener">在地图上查看</a></div></section>
 
-<footer><p id="foot"></p><p>您提供的资料只用于处理订单和联系取货,不用作其他用途,也不会公开。</p><p><a href="#" id="pv-link">隐私政策与个人资料说明</a></p><p id="trial" class="hide">网站试运行中,欢迎提出意见。</p></footer>
+<footer><p id="foot"></p><p>您提供的资料只用于处理订单和联系取货,不用作其他用途,也不会公开。</p><p><a href="#" id="pv-link">隐私政策与个人资料说明 · Privacy Policy</a></p><p id="trial" class="hide">网站试运行中,欢迎提出意见。</p></footer>
 
 <a class="fab" id="wa-fab" target="_blank" rel="noopener">WhatsApp</a>
 <button class="fab" id="fb-fab">意见反馈</button>
@@ -185,7 +190,7 @@ footer a{color:#f0d9a0}
 <div class="radio"><label><input type="radio" name="pay" value="转账" checked> 转账 (DuitNow)</label><label><input type="radio" name="pay" value="店内付款"> 取货时在店里付款</label></div>
 <label for="f-note">备注 (可不填)</label><textarea id="f-note" rows="2"></textarea>
 <p class="small">取货规则:订单保留到取货日期的第二天打烊前。超过期限没来取,店内付款的订单会取消;已转账的会退款并取消。如需延期,请提前 WhatsApp 通知我们。</p>
-<label style="display:flex;gap:8px;align-items:flex-start;font-weight:400"><input type="checkbox" id="f-ok" style="margin-top:8px"> <span>我已阅读取货与退款规则和<a href="#" class="pv-open" style="color:var(--red)">隐私政策</a>,并同意店家用我的姓名电话处理订单。</span></label>
+<label style="display:flex;gap:8px;align-items:flex-start;font-weight:400"><input type="checkbox" id="f-ok" style="margin-top:8px"> <span>我已阅读取货与退款规则和<a href="#" class="pv-open" style="color:var(--red)">隐私政策 (Privacy Policy)</a>,并同意店家用我的姓名电话处理订单。</span></label>
 <button class="btn red" id="submit" style="width:100%;margin-top:14px;font-size:19px">提交订单</button>
 </form></div></div>
 <div id="receipt" class="rcpt hide"></div>
@@ -194,23 +199,25 @@ footer a{color:#f0d9a0}
 
  
 <div id="pv"><div class="panel doc">
-<h3>📄 隐私政策与个人资料说明</h3>
- 
-<h4>1. 我们收集哪些个人资料?</h4>
+<h3>📄 隐私政策与个人资料说明<br><small class="en">Privacy Policy &amp; Personal Data Notice</small></h3>
+
+<h4>1. 我们收集哪些个人资料?<br><small class="en">1. What personal data do we collect?</small></h4>
 <p>当您在网上下单时,我们仅会收集您主动填写的必要信息:</p>
-<ul><li>您的姓名</li><li>电话号码(WhatsApp)</li><li>取货日期与时间</li></ul>
- 
-<h4>2. 这些资料用来做什么?</h4>
+<p class="en">When you place an order online, we only collect the necessary information you provide yourself:</p>
+<ul><li>您的姓名<br><span class="en">Your name</span></li><li>电话号码(WhatsApp)<br><span class="en">Phone number (WhatsApp)</span></li><li>取货日期与时间<br><span class="en">Pick-up date and time</span></li></ul>
+
+<h4>2. 这些资料用来做什么?<br><small class="en">2. What is your data used for?</small></h4>
 <p>您的资料仅用于:</p>
-<ul><li>处理您的订单与核对身份</li><li>通过 WhatsApp 与您确认订单详情及通知取货</li></ul>
- 
-<h4>3. 资料会保存多久?</h4>
-<ul><li>您在浏览器中暂存的订单记录仅保存在您的手机或电脑本地,您可以随时清除。</li>
-<li>为了符合马来西亚税务与商业做账要求,店内的实体销售单据将依法妥善存档,绝不会挪作他用。</li></ul>
- 
-<h4>4. 资料会被公开或分享给第三方吗?</h4>
-<ul><li><b>不会。</b> 我们高度重视您的个人隐私,您的资料仅限本店负责人用于处理订单,绝不用作其他用途。</li></ul>
- 
+<p class="en">Your data is used only to:</p>
+<ul><li>处理您的神料订单与核对货物<br><span class="en">Process your order and check the goods</span></li><li>通过 WhatsApp 与您确认订单详情及通知取货<br><span class="en">Confirm order details with you and notify you for pick-up via WhatsApp</span></li></ul>
+
+<h4>3. 资料会保存多久?<br><small class="en">3. How long is your data kept?</small></h4>
+<ul><li>您在浏览器中暂存的订单记录仅保存在您的手机或电脑本地,您可以随时清除。<br><span class="en">Order records saved in your browser are stored only on your own phone or computer, and you can clear them at any time.</span></li>
+<li>为了符合马来西亚税务与商业做账要求,店内的实体销售单据将依法妥善存档,绝不会挪作他用。<br><span class="en">To comply with Malaysian tax and bookkeeping requirements, in-store sales records are kept securely as required by law and will not be used for any other purpose.</span></li></ul>
+
+<h4>4. 资料会被公开或分享给第三方吗?<br><small class="en">4. Will your data be made public or shared with third parties?</small></h4>
+<ul><li><b>绝对不会。</b> 我们高度重视您的个人隐私,您的资料仅限本店负责人用于处理订单,绝不会出售、出租或泄露给任何外部广告商或第三方。<br><span class="en"><b>Absolutely not.</b> We take your privacy seriously. Your data is accessed only by the shop owner to process your order, and will never be sold, rented or disclosed to any outside advertiser or third party.</span></li></ul>
+
 <div style="margin-top:16px"><button class="btn red" id="pv-close">关闭</button></div>
 </div></div>
  
@@ -235,7 +242,7 @@ const CONFIG={
   heroImage:"",
   signImage:"images/head.png",                     // 首页左边叠在背景上的图片(透明背景 PNG);文件名要和 GitHub 里的一模一样(区分大小写)。找不到图片就不显示
   aboutImages:[],
-  email:"wanjiaxiangwanjiaxiang@gmail.com",                  // 公开显示在联系资料;不想公开就留 ""
+  email:"wanjiaxiang@gmail.com",                  // 公开显示在联系资料;不想公开就留 ""
   qrImage:"images/duitnow.png",
   slots:["09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00"],   // 取货时间 (表格 settings 的 pickup_slots 可覆盖,时间里不要有空格)
   scriptUrl:"https://script.google.com/macros/s/AKfycbyILO7lBtx8V3CLWBpufdho6BYOG2cBwvVjcTSuUOIMthrZDasWPUtD8FxT5fyBzAfx/exec",
@@ -315,14 +322,15 @@ function renderSlots(){const sl=list(S.pickup_slots).length?list(S.pickup_slots)
  const lim=nowMin()+leadMin(),today=$("f-date").value===TODAY;
  el.innerHTML=sl.map(x=>{const m=slotMin(x);return `<option${today&&m!==null&&m<lim?" disabled":""}>${esc(x)}</option>`}).join("");
  if([...el.options].some(o=>o.value===keep&&!o.disabled))el.value=keep;else{const f=[...el.options].find(o=>!o.disabled);if(f)el.value=f.value}}
+const bannerCards=()=>{const out=[];for(let i=1;i<=5;i++){const k=i===1?"":"_"+i,t=S["banner_text"+k];if(!t)continue;const a=S["banner_start"+k]||"",b=S["banner_end"+k]||"";if((!a||TODAY>=a)&&(!b||TODAY<=b))out.push({t,link:S["banner_link"+k]||""})}return out};
+const drawBanner=c=>{const bn=$("banner");bn.innerHTML=c.map(x=>`<div class="bn${x.link?" link":""}" data-link="${esc(x.link)}"><b>公告</b><p>${esc(x.t)}</p></div>`).join("");bn.classList.toggle("hide",!c.length)};
 function renderSettings(){
  const hrs=CONFIG.hours||S.hours_note;
  $("contact-list").innerHTML=`<dt>电话</dt><dd><a href="tel:${esc(CONFIG.phone.replace(/[^\d+]/g,""))}">${esc(CONFIG.phone)}</a></dd><dt>WhatsApp</dt><dd><a href="${wa()}" target="_blank" rel="noopener">${esc(CONFIG.phone)}</a></dd><dt>地址</dt><dd><a href="${esc(mapHref())}" target="_blank" rel="noopener">${esc(CONFIG.address)}</a></dd>`+(hrs?`<dt>营业时间</dt><dd>${esc(CONFIG.hours)}${S.hours_note?(CONFIG.hours?"<br>":"")+"<b>"+esc(S.hours_note)+"</b>":""}</dd>`:"")+(CONFIG.email?`<dt>邮箱</dt><dd><a href="mailto:${esc(CONFIG.email)}">${esc(CONFIG.email)}</a></dd>`:"");
  const [mn,mx]=dayRange();$("f-date").min=mn;$("f-date").max=mx;renderSlots();
- let t="",link="";const a=S.banner_start||"",b=S.banner_end||"";
- if(S.banner_text&&(!a||TODAY>=a)&&(!b||TODAY<=b)){t=S.banner_text;link=S.banner_link||""}
+ const cards=bannerCards();
  const ln=lunarNote(),tb=$("topbar");tb.textContent=ln;tb.classList.toggle("hide",!ln);   // 农历初一十五提醒:照常在最顶部
- const bn=$("banner");bn.innerHTML=t?`<b>公告</b><p>${esc(t)}</p>`:"";bn.classList.toggle("hide",!t);bn.classList.toggle("link",!!link);bn.dataset.link=link;   // sheet 的公告:首页右边的卡片
+ drawBanner(cards);try{store.set("wjx_bn",cards)}catch(e){}   // sheet 的公告:首页右边的卡片(可多张)
  const p=$("pause");p.textContent=S.pause_message||"暂时停止接单,请直接 WhatsApp 询问我们。";p.classList.toggle("hide",!paused())}
 
 function group(rows){const m=new Map();let last={};
@@ -450,7 +458,7 @@ async function sendFb(){const m=$("fb-text").value.trim(),c=$("fb-c").value.trim
 
 /* 事件 */
 document.addEventListener("click",e=>{const t=e.target;
- if(t.closest("#banner")&&$("banner").dataset.link){setCat($("banner").dataset.link);location.hash="#products"}
+ {const bc=t.closest("#banner .bn");if(bc&&bc.dataset.link){setCat(bc.dataset.link);location.hash="#products"}}
  {const tc=t.closest("[data-c]");if(tc)setCat(tc.dataset.c)}
  if(t.dataset.u!==undefined)setUse(t.dataset.u);
  if(t.dataset.v){P[t.dataset.g].sel=+t.dataset.v;renderProducts()}
@@ -480,6 +488,8 @@ const syncCart=()=>{cart=store.get("wjx_cart",[]);$("cart-n").textContent=cart.r
  if($("drawer").classList.contains("open")&&!$("cartview").classList.contains("hide"))renderCart()};
 addEventListener("storage",e=>{if(e.key==="wjx_cart")syncCart()});
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)syncCart()});
+{const ln=lunarNote(),tb=$("topbar");tb.textContent=ln;tb.classList.toggle("hide",!ln);
+ try{const c=store.get("wjx_bn",[]);if(Array.isArray(c)&&c.length)drawBanner(c.slice(0,5))}catch(e){}}
 (async()=>{
  const [s,p,n,f]=await Promise.all([load(CONFIG.settingsCsv,SAMPLE.settings),load(CONFIG.productsCsv,SAMPLE.products),load(CONFIG.newsCsv,SAMPLE.news),load(CONFIG.faqCsv,SAMPLE.faq)]);
  S=Object.fromEntries((s||[]).map(r=>[r.key,r.value]));renderSettings();
