@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="万家香神料店 · 柔佛居銮。烧纸、香、蜡烛、供品,网上预订,到店自取。">
+<meta property="og:type" content="website"><meta property="og:title" content="万家香神料店"><meta property="og:description" content="烧纸、香、蜡烛、供品,网上预订,到店自取。柔佛居銮。"><meta name="theme-color" content="#7A1410">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='16' fill='%239E1D18'/%3E%3Ctext x='50' y='72' font-size='64' text-anchor='middle' fill='%23D4A63A'%3E香%3C/text%3E%3C/svg%3E">
 <title>万家香神料店</title>
 <style>
 :root{--red:#9E1D18;--red-d:#7A1410;--gold:#D4A63A;--ink:#2A2421;--ash:#F2F0ED;--line:#D9D4CE;--mute:#6b625b}
@@ -123,7 +126,6 @@ input[type=text],input[type=tel],input[type=date],select,textarea{width:100%;pad
 <div id="banner" class="hide"></div>
 <nav><div class="wrap"><b id="nav-name"></b>
 <ul id="menu"><li><a href="#about">关于我们</a></li><li><a href="#products">商品</a></li><li><a href="#news">最新消息</a></li><li><a href="#faq">常见问题</a></li><li><a href="#contact">联系我们</a></li></ul>
-<button class="nb" id="orders-btn">我的订单</button>
 <button class="nb" id="cart-btn">购物车 (<span id="cart-n">0</span>)</button>
 <button class="nb" id="menu-btn" aria-label="菜单">菜单</button></div></nav>
 
@@ -157,6 +159,7 @@ input[type=text],input[type=tel],input[type=date],select,textarea{width:100%;pad
 <div id="drawer"><div class="panel">
 <div style="display:flex;justify-content:space-between"><h3>我的购物车</h3><button class="nb" style="color:var(--ink);border-color:#999" id="close-d">关闭</button></div>
 <div id="cartview">
+<div style="text-align:right"><button type="button" id="orders-btn" style="background:none;border:0;color:var(--red);text-decoration:underline;font-size:16px;cursor:pointer">我的订单 ›</button></div>
 <div id="lines"></div>
 <div id="co" class="hide">
 <div class="total"><span>总计</span><span id="sum"></span></div>
@@ -164,7 +167,7 @@ input[type=text],input[type=tel],input[type=date],select,textarea{width:100%;pad
 <label for="f-name">姓名</label><input type="text" id="f-name" autocomplete="name">
 <label for="f-phone">电话 (WhatsApp)</label><input type="tel" id="f-phone" autocomplete="tel">
 <label for="f-date">取货日期</label><input type="date" id="f-date">
-<label for="f-slot">取货时段</label><select id="f-slot"></select>
+<label for="f-slot">取货时间</label><select id="f-slot"></select>
 <label>付款方式</label>
 <div class="radio"><label><input type="radio" name="pay" value="转账" checked> 转账 (DuitNow)</label><label><input type="radio" name="pay" value="店内付款"> 取货时在店里付款</label></div>
 <label for="f-note">备注 (可不填)</label><textarea id="f-note" rows="2"></textarea>
@@ -184,24 +187,24 @@ input[type=text],input[type=tel],input[type=date],select,textarea{width:100%;pad
 /* ============ 只需要改这一段 ============ */
 const CONFIG={
   name:"万家香", fullName:"万家香神料店",
-  slogan:"传统神料,几十年老字号",                 // 【改成你们的口号】
+  slogan:"传统神料,几十年老字号",
   intro:"烧纸、香、蜡烛等传统神料,欢迎网上预订,到店自取。",
-  whatsapp:"60105358238",                          // 【店里的 WhatsApp:60 + 号码,不加 + 和开头的 0】
+  whatsapp:"60105358238",                          // 店里 WhatsApp:60 + 号码,不加 + 和开头的 0
   phone:"010-535 8238",
   address:"5, Jln Cermai 1, Tmn Suria, 86000 Kluang, Johor",
-  mapUrl:"https://maps.app.goo.gl/VdrK9bQajktGXZZs7",   // Google 地图分享链接,会显示在联系我们里
-  hours:"",
-  ssm:"",                                          // 【SSM 注册号,填了会显示在页尾】
+  mapUrl:"https://maps.app.goo.gl/VdrK9bQajktGXZZs7",   // Google 地图分享链接
+  hours:"",                                        // 营业时间,先空着(空的会自动隐藏)
+  ssm:"",
   trial:true,                                      // 试运行期间 true,正式推广后改 false
-  heroImage:"",                                    // 例如 "images/shop.jpg"
-  aboutImages:[],                                  // 例如 ["images/a1.jpg","images/a2.jpg"]
-  qrImage:"images/duitnow.png",                    // DuitNow 二维码图片
-  slots:["上午","下午","傍晚"],                      // 取货时段 (表格 settings 的 pickup_slots 可覆盖)
-  scriptUrl:"https://script.google.com/macros/s/AKfycbyILO7lBtx8V3CLWBpufdho6BYOG2cBwvVjcTSuUOIMthrZDasWPUtD8FxT5fyBzAfx/exec",                                    // Apps Script 网址 (之后教你设置)
+  heroImage:"",
+  aboutImages:[],
+  qrImage:"images/duitnow.png",
+  slots:["09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00"],   // 取货时间 (表格 settings 的 pickup_slots 可覆盖,时间里不要有空格)
+  scriptUrl:"https://script.google.com/macros/s/AKfycbyILO7lBtx8V3CLWBpufdho6BYOG2cBwvVjcTSuUOIMthrZDasWPUtD8FxT5fyBzAfx/exec",
   productsCsv:"https://docs.google.com/spreadsheets/d/e/2PACX-1vRw2rf_rrsyCp79iHiFsLi_eOMiseYPcz5ZSSkUAcOd2p_Jbem9kV7R9sOrY5Vkj3Fy1LXM_LTEj-Mk/pub?gid=1873806923&single=true&output=csv",
   newsCsv:"https://docs.google.com/spreadsheets/d/e/2PACX-1vRw2rf_rrsyCp79iHiFsLi_eOMiseYPcz5ZSSkUAcOd2p_Jbem9kV7R9sOrY5Vkj3Fy1LXM_LTEj-Mk/pub?gid=1357834164&single=true&output=csv",
   settingsCsv:"https://docs.google.com/spreadsheets/d/e/2PACX-1vRw2rf_rrsyCp79iHiFsLi_eOMiseYPcz5ZSSkUAcOd2p_Jbem9kV7R9sOrY5Vkj3Fy1LXM_LTEj-Mk/pub?gid=1447226578&single=true&output=csv",
-  faqCsv:"https://docs.google.com/spreadsheets/d/e/2PACX-1vRw2rf_rrsyCp79iHiFsLi_eOMiseYPcz5ZSSkUAcOd2p_Jbem9kV7R9sOrY5Vkj3Fy1LXM_LTEj-Mk/pub?gid=617975209&single=true&output=csv",   // 表格发布后的 CSV 链接
+  faqCsv:"https://docs.google.com/spreadsheets/d/e/2PACX-1vRw2rf_rrsyCp79iHiFsLi_eOMiseYPcz5ZSSkUAcOd2p_Jbem9kV7R9sOrY5Vkj3Fy1LXM_LTEj-Mk/pub?gid=617975209&single=true&output=csv",
   about:[
     "万家香位于柔佛居銮,是一家家庭经营的传统神料店。",
     "【请改成你们自己的故事:哪一年开业、创办人是谁、几十年来服务了哪些老顾客。】",
@@ -220,16 +223,20 @@ const SAMPLE={
   {name:"示范:斋菜",unit:"一份",price:"12",category:"斋菜",use:"初一十五",description:"",image:"",status:"上架"},
   {name:"示范:寿桃",unit:"一盒",price:"18",category:"供品",use:"诞辰",description:"",image:"",status:"上架"}],
  news:[{date:"2026-10-01",title:"示范:网站试运行",content:"在表格 news 分页新增一行,这里就会出现。"}],
- faq:[{question:"怎么取货?",answer:"下单时选好日期和时段,取货时报订单编号和电话后四位。"}],
+ faq:[{question:"怎么取货?",answer:"下单时选好日期和时间,取货时报订单编号和电话后四位。"}],
  settings:[]
 };
 /* ============ 以下不用改 ============ */
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const pad=n=>String(n).padStart(2,"0");
-const ymd=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
-const TODAY=ymd(new Date());
-const money=n=>"RM "+Number(n||0).toFixed(2);
+const KL="Asia/Kuala_Lumpur";
+const TODAY=new Date().toLocaleDateString("en-CA",{timeZone:KL});            // 马来西亚时间的今天
+const addD=(s,n)=>{const p=s.split("-").map(Number);return new Date(Date.UTC(p[0],p[1]-1,p[2]+n)).toISOString().slice(0,10)};
+const nowMin=()=>{const [h,m]=new Date().toLocaleTimeString("en-GB",{timeZone:KL,hourCycle:"h23",hour:"2-digit",minute:"2-digit"}).split(":").map(Number);return h*60+m};
+const slotMin=s=>{const m=/(\d{1,2})[:：.](\d{2})/.exec(s);return m?(+m[1])*60+(+m[2]):null};
+const cents=n=>Math.round((parseFloat(n)||0)*100);                             // 金额全部用整数 sen 计算,避免小数误差
+const money=n=>"RM "+(Math.round(Number(n||0)*100)/100).toFixed(2);
+const mapHref=()=>CONFIG.mapUrl||("https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(CONFIG.fullName+" "+CONFIG.address));
 const wa=t=>"https://wa.me/"+CONFIG.whatsapp+(t?"?text="+encodeURIComponent(t):"");
 const store={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 function parseCSV(t){const rows=[];let r=[],f="",q=false;
@@ -240,13 +247,15 @@ function parseCSV(t){const rows=[];let r=[],f="",q=false;
  if(f||r.length){r.push(f);rows.push(r)}
  const h=(rows.shift()||[]).map(x=>x.trim().toLowerCase());
  return rows.filter(x=>x.some(v=>v.trim())).map(x=>Object.fromEntries(h.map((k,i)=>[k,(x[i]||"").trim()])))}
-async function load(url,sample){if(!url)return sample;try{const r=await fetch(url);if(!r.ok)throw 0;return parseCSV(await r.text())}catch(e){return null}}
+async function load(url,sample){if(!url)return sample;const c=new AbortController(),t=setTimeout(()=>c.abort(),10000);
+ try{const r=await fetch(url,{signal:c.signal});if(!r.ok)throw 0;return parseCSV(await r.text())}catch(e){return null}finally{clearTimeout(t)}}
 const list=s=>String(s||"").split(/[,\uff0c、;\s]+/).map(x=>x.trim()).filter(Boolean);
 
-let P=[],S={},cat="",use="",fes="",showAll=false,cart=store.get("wjx_cart",[]);
+let P=[],S={},cat="",use="",fes="",showAll=false,loaded=false,loadFail=false,cart=store.get("wjx_cart",[]);
 const paused=()=>/^(yes|y|是|true)$/i.test(S.pause_orders||"");
+const dayRange=()=>[addD(TODAY,parseInt(S.min_advance_days)||0),addD(TODAY,parseInt(S.max_advance_days)||30)];
+const leadMin=()=>{const v=parseInt(S.lead_minutes);return isNaN(v)?30:v};
 const LUNAR_AHEAD=2; // 初一、十五前几天开始提醒(2 = 前两天;今天也算)
-const KL="Asia/Kuala_Lumpur";
 const lunarOn=n=>{try{return parseInt(new Intl.DateTimeFormat("en-u-ca-chinese",{day:"numeric",timeZone:KL}).formatToParts(new Date(Date.now()+n*864e5)).find(x=>x.type==="day").value,10)}catch(e){return 0}};
 const lunarNote=()=>{for(let n=0;n<=LUNAR_AHEAD;n++){const d=lunarOn(n);if(d===1||d===15){const nm="农历"+(d===1?"初一":"十五");
  const md=new Date(Date.now()+n*864e5).toLocaleDateString("zh-CN",{month:"long",day:"numeric",timeZone:KL});
@@ -260,17 +269,20 @@ function renderStatic(){
  if(CONFIG.heroImage){$("hero-img").src=CONFIG.heroImage;$("hero-img").classList.remove("hide")}
  $("about-text").innerHTML=CONFIG.about.map(p=>`<p>${esc(p)}</p>`).join("");
  $("about-imgs").innerHTML=CONFIG.aboutImages.map(s=>`<img src="${esc(s)}" alt="店里照片" loading="lazy">`).join("");
- $("map").href="https://maps.app.goo.gl/VdrK9bQajktGXZZs7";
+ $("map").href=mapHref();
  $("foot").textContent="© "+new Date().getFullYear()+" "+CONFIG.fullName+(CONFIG.ssm?" · SSM "+CONFIG.ssm:"");
  if(CONFIG.trial)$("trial").classList.remove("hide")}
+function renderSlots(){const sl=list(S.pickup_slots).length?list(S.pickup_slots):CONFIG.slots,el=$("f-slot"),keep=el.value;
+ const lim=nowMin()+leadMin(),today=$("f-date").value===TODAY;
+ el.innerHTML=sl.map(x=>{const m=slotMin(x);return `<option${today&&m!==null&&m<lim?" disabled":""}>${esc(x)}</option>`}).join("");
+ if([...el.options].some(o=>o.value===keep&&!o.disabled))el.value=keep;else{const f=[...el.options].find(o=>!o.disabled);if(f)el.value=f.value}}
 function renderSettings(){
- $("contact-list").innerHTML=`<dt>电话</dt><dd><a href="tel:${esc(CONFIG.phone.replace(/[^\d+]/g,""))}">${esc(CONFIG.phone)}</a></dd><dt>WhatsApp</dt><dd><a href="${wa()}" target="_blank" rel="noopener">${esc(CONFIG.phone)}</a></dd><dt>地址</dt><dd><a href="https://maps.app.goo.gl/VdrK9bQajktGXZZs7" target="_blank" rel="noopener">${esc(CONFIG.address)}</a></dd><dt>营业时间</dt><dd>${esc(CONFIG.hours)}${S.hours_note?"<br><b>"+esc(S.hours_note)+"</b>":""}</dd>`;
- const sl=list(S.pickup_slots).length?list(S.pickup_slots):CONFIG.slots;
- $("f-slot").innerHTML=sl.map(x=>`<option>${esc(x)}</option>`).join("");
- $("f-date").min=TODAY;
+ const hrs=CONFIG.hours||S.hours_note;
+ $("contact-list").innerHTML=`<dt>电话</dt><dd><a href="tel:${esc(CONFIG.phone.replace(/[^\d+]/g,""))}">${esc(CONFIG.phone)}</a></dd><dt>WhatsApp</dt><dd><a href="${wa()}" target="_blank" rel="noopener">${esc(CONFIG.phone)}</a></dd><dt>地址</dt><dd><a href="${esc(mapHref())}" target="_blank" rel="noopener">${esc(CONFIG.address)}</a></dd>`+(hrs?`<dt>营业时间</dt><dd>${esc(CONFIG.hours)}${S.hours_note?(CONFIG.hours?"<br>":"")+"<b>"+esc(S.hours_note)+"</b>":""}</dd>`:"");
+ const [mn,mx]=dayRange();$("f-date").min=mn;$("f-date").max=mx;renderSlots();
  let t="",link="";const a=S.banner_start||"",b=S.banner_end||"";
  if(S.banner_text&&(!a||TODAY>=a)&&(!b||TODAY<=b)){t=S.banner_text;link=S.banner_link||""}
- const ln=lunarNote();if(ln)t=t?t+"  |  "+ln:ln
+ const ln=lunarNote();if(ln)t=t?t+"  |  "+ln:ln;
  const bn=$("banner");bn.textContent=t;bn.classList.toggle("hide",!t);bn.classList.toggle("link",!!link);bn.dataset.link=link;
  const p=$("pause");p.textContent=S.pause_message||"暂时停止接单,请直接 WhatsApp 询问我们。";p.classList.toggle("hide",!paused())}
 
@@ -279,11 +291,14 @@ function group(rows){const m=new Map();let last={};
   const st=r.status||"上架";if(st==="下架"||!r.name)return;
   if(!m.has(r.name))m.set(r.name,{name:r.name,cat:r.category,use:r.use,desc:r.description,img:r.image,v:[]});
   const g=m.get(r.name);g.cat=g.cat||r.category;g.use=g.use||r.use;g.desc=g.desc||r.description;g.img=g.img||r.image;
-  g.v.push({id:(r.id||"").trim()||r.name+"|"+(r.unit||""),unit:r.unit,price:parseFloat(r.price)||0,out:st==="缺货"})});
- return [...m.values()].map(g=>({...g,sel:Math.max(0,g.v.findIndex(u=>!u.out))}))}
+  const pc=cents(r.price);
+  g.v.push({id:(r.id||"").trim()||r.name+"|"+(r.unit||""),unit:r.unit,price:pc/100,pc,np:pc<=0,out:st==="缺货"})});
+ return [...m.values()].map(g=>({...g,sel:Math.max(0,g.v.findIndex(u=>!u.out&&!u.np))}))}
 function renderProducts(){
  const g=$("grid");
- if(P===null){P=[];g.innerHTML='<p class="msg">商品暂时载入不了,请直接 WhatsApp 询问我们。</p>';return}
+ if(!loaded)return;
+ if(loadFail||!P.length){g.className="grid";$("chips").innerHTML="";$("uses-wrap").classList.add("hide");
+  g.innerHTML=loadFail?'<p class="msg">商品暂时载入不了,请直接 WhatsApp 询问我们。</p>':'<p class="msg">商品更新中,请直接 WhatsApp 询问我们。</p>';return}
  const uses=[...new Set(P.flatMap(x=>list(x.use)))].filter(u=>u&&u!=="通用");
  $("uses-wrap").classList.toggle("hide",!uses.length);
  const obj=uses.filter(u=>u==="拜神"||u==="拜祖先"),fs=uses.filter(u=>!obj.includes(u));
@@ -299,12 +314,12 @@ function renderProducts(){
  let lastc=null;
  g.innerHTML=rows.length?rows.map(([x,i])=>{
   const hd=(!cat&&cats.length>1&&(x.cat||"")!==lastc)?(lastc=x.cat||"",`<h3 class="ch">${esc(lastc||"其他")}</h3>`):"";
-  const u=x.v[x.sel],off=x.v.every(k=>k.out);
-  const pills=x.v.length>1?`<select class="sel" data-g="${i}" aria-label="选择单位">${x.v.map((k,j)=>`<option value="${j}"${j===x.sel?" selected":""}${k.out?" disabled":""}>${esc(k.unit||"每件")} · ${money(k.price)}${k.out?"(缺货)":""}</option>`).join("")}</select>`:(x.v[0].unit?`<p class="unit">单位:${esc(x.v[0].unit)}</p>`:"");
+  const u=x.v[x.sel],off=x.v.every(k=>k.out||k.np);
+  const pills=x.v.length>1?`<select class="sel" data-g="${i}" aria-label="选择单位">${x.v.map((k,j)=>`<option value="${j}"${j===x.sel?" selected":""}${k.out||k.np?" disabled":""}>${esc(k.unit||"每件")} · ${k.np?"询价":money(k.price)}${k.out?"(缺货)":""}</option>`).join("")}</select>`:(x.v[0].unit?`<p class="unit">单位:${esc(x.v[0].unit)}</p>`:"");
   const img=x.img?`<img src="${esc(x.img)}" alt="${esc(x.name)}" loading="lazy">`:`<div class="ph" aria-hidden="true">香</div>`;
-  const dis=u.out||paused(),lab=paused()?"暂停接单":u.out?"暂时缺货":"加入购物车";
+  const dis=u.out||u.np||paused(),lab=paused()?"暂停接单":u.out?"暂时缺货":u.np?"请 WhatsApp 询价":"加入购物车";
   const ut=list(x.use).filter(u=>u!=="通用").join("、"),tag=esc(x.cat)+(ut?" · "+esc(ut):"");
-  return hd+`<article class="card${off?" off":""}">${img}<div class="b"><span class="cat">${tag}</span><h3>${esc(x.name)}</h3><p>${esc(x.desc)}</p>${pills}<div class="price">${money(u.price)}</div><button class="add" data-add="${esc(u.id)}" ${dis?"disabled":""}>${lab}</button></div></article>`}).join(""):'<p class="msg">这个分类暂时没有商品。</p>'}
+  return hd+`<article class="card${off?" off":""}">${img}<div class="b"><span class="cat">${tag}</span><h3>${esc(x.name)}</h3><p>${esc(x.desc)}</p>${pills}<div class="price">${u.np?"请询价":money(u.price)}</div><button class="add" data-add="${esc(u.id)}" ${dis?"disabled":""}>${lab}</button></div></article>`}).join(""):'<p class="msg">这个分类暂时没有商品。</p>'}
 const okTag=(x,t)=>!t||!list(x.use).length||list(x.use).includes("通用")||list(x.use).includes(t);
 function setCat(c){if(c==="__back"){cat=use=fes="";showAll=false}else if(c==="__all"){showAll=true;cat=""}else{const T=c!=="通用"&&P.some(x=>list(x.use).includes(c));if(T&&(c==="拜神"||c==="拜祖先")){use=c;cat=""}else if(T){fes=c;cat=""}else cat=c==="全部"?"":c}renderProducts();$("products").scrollIntoView({behavior:"smooth"})}
 function setUse(u){use=u==="全部"?"":u;cat="";renderProducts()}
@@ -318,42 +333,45 @@ function renderNews(l){const n=$("news-list");
 function renderFaq(l){const f=$("faq-list");
  f.innerHTML=l&&l.length?l.filter(x=>x.question).map(x=>`<details><summary>${esc(x.question)}</summary><p>${esc(x.answer)}</p></details>`).join(""):'<p class="msg">有问题请直接 WhatsApp 询问我们。</p>'}
 
-/* 购物车 */
+/* 购物车(金额用整数 sen) */
 const find=id=>{for(const g of P)for(const u of g.v)if(u.id===id)return{g,u}};
-const lines=()=>cart.map(c=>{const r=find(c.id);return r&&{id:c.id,name:r.g.name,unit:r.u.unit,price:r.u.price,q:c.q,sub:r.u.price*c.q,out:r.u.out}}).filter(Boolean);
+const lines=()=>cart.map(c=>{const r=find(c.id);return r&&{id:c.id,name:r.g.name,unit:r.u.unit,price:r.u.price,q:c.q,c:r.u.pc*c.q,sub:r.u.pc*c.q/100,out:r.u.out||r.u.np}}).filter(Boolean);
+const tot=l=>l.reduce((a,x)=>a+x.c,0)/100;
 const sv=()=>{store.set("wjx_cart",cart);$("cart-n").textContent=cart.reduce((a,c)=>a+c.q,0)};
 function renderCart(){const l=lines(),box=$("lines");
  box.innerHTML=l.length?l.map(x=>`<div class="line"><div><b>${esc(x.name)}</b> ${esc(x.unit)}<br><span class="small">${money(x.price)}${x.out?" · 已缺货,请删除":""}</span></div><div class="qty"><button data-q="${esc(x.id)}" data-d="-1" aria-label="减少">−</button><span>${x.q}</span><button data-q="${esc(x.id)}" data-d="1" aria-label="增加">+</button></div></div>`).join(""):'<p class="msg">购物车是空的,先去挑选商品吧。</p>';
- $("co").classList.toggle("hide",!l.length);$("sum").textContent=money(l.reduce((a,x)=>a+x.sub,0))}
-function openCart(){$("cartview").classList.remove("hide");$("receipt").classList.add("hide");$("history").classList.add("hide");renderCart();
+ $("co").classList.toggle("hide",!l.length);$("sum").textContent=money(tot(l))}
+function openCart(){$("cartview").classList.remove("hide");$("receipt").classList.add("hide");$("history").classList.add("hide");renderCart();renderSlots();
  const me=store.get("wjx_me",{});$("f-name").value=$("f-name").value||me.name||"";$("f-phone").value=$("f-phone").value||me.phone||"";
  $("drawer").classList.add("open")}
 
 async function submit(e){e.preventDefault();
  if(paused())return alert(S.pause_message||"暂时停止接单。");
  const l=lines();if(!l.length)return alert("购物车是空的。");
- if(l.some(x=>x.out))return alert("购物车里有已缺货的商品,请先删除。");
+ if(l.some(x=>x.out))return alert("购物车里有已缺货或暂时不能下单的商品,请先删除。");
  const name=$("f-name").value.trim(),phone=$("f-phone").value.trim(),date=$("f-date").value,slot=$("f-slot").value,note=$("f-note").value.trim();
- const pay=document.querySelector("input[name=pay]:checked").value;
+ const pay=document.querySelector("input[name=pay]:checked").value,[mn,mx]=dayRange();
  if(!name)return alert("请填写姓名。");
  if(phone.replace(/\D/g,"").length<9)return alert("请填写正确的电话号码。");
- if(!date||date<TODAY)return alert("请选择取货日期。");
+ if(!date||date<mn||date>mx)return alert("请选择 "+mn+" 到 "+mx+" 之间的取货日期。");
  if(list(S.closed_dates).includes(date))return alert("这一天店里休息,请选择其他日期。");
+ if(!slot)return alert("请选择取货时间。");
+ const sm=slotMin(slot);if(date===TODAY&&sm!==null&&sm<nowMin()+leadMin())return alert("这个时间太近了,请选择晚一点的时间,或改选其他日期。");
  if(!$("f-ok").checked)return alert("请先勾选同意取货与退款规则。");
  const btn=$("submit");btn.disabled=true;btn.textContent="提交中……";
- const local=l.reduce((a,x)=>a+x.sub,0);let no="",total=local,synced=false;
+ const local=tot(l);let no="",total=local,synced=false;
  const rid=Date.now().toString(36)+Math.random().toString(36).slice(2,8);
- if(CONFIG.scriptUrl){try{
-  const r=await fetch(CONFIG.scriptUrl,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({type:"order",rid,name,phone,date,slot,pay,note,items:l.map(x=>({id:x.id,qty:x.q}))})});
+ if(CONFIG.scriptUrl){const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),20000);try{
+  const r=await fetch(CONFIG.scriptUrl,{method:"POST",signal:ac.signal,headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({type:"order",rid,name,phone,date,slot,pay,note,items:l.map(x=>({id:x.id,qty:x.q}))})});
   const j=await r.json();
   if(j.ok){no=j.order_no;total=j.total;synced=true}
   else if(j.error){alert(j.error);btn.disabled=false;btn.textContent="提交订单";return}
- }catch(_){}}
+ }catch(_){}finally{clearTimeout(tm)}}
  if(!no)no="T"+TODAY.replace(/-/g,"")+"-"+Math.floor(100+Math.random()*900);
  store.set("wjx_me",{name,phone});
- const ord={no,name,phone,date,slot,pay,note,l,total,synced};saveHist(ord);
+ const ord={no,name,phone,date,slot,pay,note,l,total,synced,diff:synced&&Math.abs(total-local)>0.005};saveHist(ord);
  receipt(ord);
- cart=[];sv();renderProducts();btn.disabled=false;btn.textContent="提交订单";$("f-ok").checked=false}
+ cart=[];sv();btn.disabled=false;btn.textContent="提交订单";$("f-ok").checked=false}
 
 const orderText=o=>`【${CONFIG.name} 网上订单】\n订单编号:${o.no}\n姓名:${o.name}\n电话:${o.phone}\n取货:${o.date} ${o.slot}\n付款:${o.pay}\n\n`+o.l.map(x=>`${x.name} ${x.unit} x${x.q} (${money(x.sub)})`).join("\n")+`\n\n总额:${money(o.total)}`+(o.note?`\n备注:${o.note}`:"")+(o.pay==="转账"?"\n我会转账后发付款截图。":"\n我会取货时在店里付款。");
 function receipt(o){
@@ -363,7 +381,8 @@ function receipt(o){
  $("receipt").innerHTML=`<h3>订单确认</h3><p class="small" style="margin:0">这是订单确认,不是正式发票或收据,正式收据取货时由店里开出。</p>
  <p class="small">订单编号</p><div class="no">${esc(o.no)}</div>
  ${o.synced||!CONFIG.scriptUrl?"":`<div class="warn">订单暂时没能记录到系统。请务必点下面的按钮把订单发到 WhatsApp,店里以 WhatsApp 为准。</div>`}
- <p>${esc(o.name)} · ${esc(o.phone)}</p><p>取货:<b>${esc(o.date)} ${esc(o.slot)}</b><br><span class="small">${esc(CONFIG.address)}<br>营业时间:${esc(CONFIG.hours)}</span></p>
+ ${o.diff?`<div class="warn">商品价钱刚刚有更新,总额以这里显示的为准,店里会再核对。</div>`:""}
+ <p>${esc(o.name)} · ${esc(o.phone)}</p><p>取货:<b>${esc(o.date)} ${esc(o.slot)}</b><br><span class="small">${esc(CONFIG.address)}${CONFIG.hours?"<br>营业时间:"+esc(CONFIG.hours):""}</span></p>
  <table>${o.l.map(x=>`<tr><td>${esc(x.name)} ${esc(x.unit)} × ${x.q}</td><td>${money(x.sub)}</td></tr>`).join("")}<tr><td><b>总额</b></td><td><b>${money(o.total)}</b></td></tr></table>
  ${o.note?`<p class="small">备注:${esc(o.note)}</p>`:""}${qr}
  <a class="btn wa" style="width:100%;text-align:center" href="${wa(txt)}" target="_blank" rel="noopener">发送订单到 WhatsApp</a>
@@ -386,7 +405,7 @@ function openHistory(){const h=store.get(HK,[]);
  $("drawer").classList.add("open");$("drawer").querySelector(".panel").scrollTop=0}
 
 async function sendFb(){const m=$("fb-text").value.trim(),c=$("fb-c").value.trim();if(!m)return;
- let ok=false;if(CONFIG.scriptUrl){try{const r=await fetch(CONFIG.scriptUrl,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({type:"feedback",message:m,contact:c})});ok=(await r.json()).ok}catch(_){}}
+ let ok=false;if(CONFIG.scriptUrl){const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),15000);try{const r=await fetch(CONFIG.scriptUrl,{method:"POST",signal:ac.signal,headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({type:"feedback",message:m,contact:c})});ok=(await r.json()).ok}catch(_){}finally{clearTimeout(tm)}}
  if(!ok)window.open(wa("【网页意见反馈】"+m+(c?"\n联系:"+c:"")),"_blank");
  $("fb").classList.remove("open");$("fb-text").value="";toast("谢谢您的意见")}
 
@@ -396,8 +415,8 @@ document.addEventListener("click",e=>{const t=e.target;
  {const tc=t.closest("[data-c]");if(tc)setCat(tc.dataset.c)}
  if(t.dataset.u!==undefined)setUse(t.dataset.u);
  if(t.dataset.v){P[t.dataset.g].sel=+t.dataset.v;renderProducts()}
- if(t.dataset.add){const c=cart.find(x=>x.id===t.dataset.add);c?c.q++:cart.push({id:t.dataset.add,q:1});sv();toast("已加入购物车")}
- if(t.dataset.q){const c=cart.find(x=>x.id===t.dataset.q);if(c){c.q+=+t.dataset.d;if(c.q<1)cart=cart.filter(x=>x!==c)}sv();renderCart()}
+ if(t.dataset.add){const c=cart.find(x=>x.id===t.dataset.add);c?c.q=Math.min(99,c.q+1):cart.push({id:t.dataset.add,q:1});sv();toast("已加入购物车")}
+ if(t.dataset.q){const c=cart.find(x=>x.id===t.dataset.q);if(c){c.q=Math.min(99,c.q+(+t.dataset.d));if(c.q<1)cart=cart.filter(x=>x!==c)}sv();renderCart()}
  if(t.closest("#cart-btn")||t.id==="hist-back")openCart();
  if(t.closest("#orders-btn"))openHistory();
  if(t.id==="hist-clear"&&confirm("确定清除这台设备上的订单记录吗?(不影响店里的订单)")){store.set(HK,[]);openHistory()}
@@ -407,22 +426,22 @@ document.addEventListener("click",e=>{const t=e.target;
  if(t.id==="fb-fab")$("fb").classList.add("open");
  if(t.id==="fb-close"||t.id==="fb")$("fb").classList.remove("open");
  if(t.id==="fb-send")sendFb()});
-document.addEventListener("change",e=>{const t=e.target;if(t.classList&&t.classList.contains("sel")){P[t.dataset.g].sel=+t.value;renderProducts()}});
-document.addEventListener("change",e=>{if(e.target.id==="fes-sel"){fes=e.target.value;cat="";renderProducts()}});
+document.addEventListener("change",e=>{const t=e.target;
+ if(t.classList&&t.classList.contains("sel")){P[t.dataset.g].sel=+t.value;renderProducts()}
+ else if(t.id==="fes-sel"){fes=t.value;cat="";renderProducts()}
+ else if(t.id==="f-date")renderSlots()});
 $("form").addEventListener("submit",submit);
 
 renderStatic();renderSettings();sv();
-// 同一浏览器开了多个分页/页面时,购物车改动要同步,不然图标数字会过期
+// 同一浏览器开了多个分页时,同步购物车数字(只更新数字和购物车,不重画商品区)
 const syncCart=()=>{cart=store.get("wjx_cart",[]);$("cart-n").textContent=cart.reduce((a,c)=>a+c.q,0);
- try{renderProducts()}catch(e){}
- if($("drawer").classList.contains("open")&&!$("cartview").classList.contains("hide"))try{renderCart()}catch(e){}};
+ if($("drawer").classList.contains("open")&&!$("cartview").classList.contains("hide"))renderCart()};
 addEventListener("storage",e=>{if(e.key==="wjx_cart")syncCart()});
-addEventListener("pageshow",syncCart);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)syncCart()});
 (async()=>{
  const [s,p,n,f]=await Promise.all([load(CONFIG.settingsCsv,SAMPLE.settings),load(CONFIG.productsCsv,SAMPLE.products),load(CONFIG.newsCsv,SAMPLE.news),load(CONFIG.faqCsv,SAMPLE.faq)]);
  S=Object.fromEntries((s||[]).map(r=>[r.key,r.value]));renderSettings();
- P=p===null?null:group(p);renderProducts();renderNews(n);renderFaq(f);sv()})();
+ loadFail=p===null;P=loadFail?[]:group(p);loaded=true;renderProducts();renderNews(n);renderFaq(f);sv()})();
 </script>
 </body>
 </html>
