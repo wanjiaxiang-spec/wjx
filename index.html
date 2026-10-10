@@ -315,7 +315,7 @@ function renderSlots(){const sl=list(S.pickup_slots).length?list(S.pickup_slots)
  if([...el.options].some(o=>o.value===keep&&!o.disabled))el.value=keep;else{const f=[...el.options].find(o=>!o.disabled);if(f)el.value=f.value}}
 function renderSettings(){
  const hrs=CONFIG.hours||S.hours_note;
- $("contact-list").innerHTML=`<dt>电话</dt><dd><a href="tel:${esc(CONFIG.phone.replace(/[^\d+]/g,""))}">${esc(CONFIG.phone)}</a></dd><dt>WhatsApp</dt><dd><a href="${wa()}" target="_blank" rel="noopener">${esc(CONFIG.phone)}</a></dd><dt>地址</dt><dd><a href="${esc(mapHref())}" target="_blank" rel="noopener">${esc(CONFIG.address)}</a></dd>`+(hrs?`<dt>营业时间</dt><dd>${esc(CONFIG.hours)}${S.hours_note?(CONFIG.hours?"<br>":"")+"<b>"+esc(S.hours_note)+"</b>":""}</dd>`:"")     +(CONFIG.email?`<dt>邮箱</dt><dd><a href="mailto:${esc(CONFIG.email)}">${esc(CONFIG.email)}</a></dd>`:"")；
+ $("contact-list").innerHTML=`<dt>电话</dt><dd><a href="tel:${esc(CONFIG.phone.replace(/[^\d+]/g,""))}">${esc(CONFIG.phone)}</a></dd><dt>WhatsApp</dt><dd><a href="${wa()}" target="_blank" rel="noopener">${esc(CONFIG.phone)}</a></dd><dt>地址</dt><dd><a href="${esc(mapHref())}" target="_blank" rel="noopener">${esc(CONFIG.address)}</a></dd>`+(hrs?`<dt>营业时间</dt><dd>${esc(CONFIG.hours)}${S.hours_note?(CONFIG.hours?"<br>":"")+"<b>"+esc(S.hours_note)+"</b>":""}</dd>`:"")+(CONFIG.email?`<dt>邮箱</dt><dd><a href="mailto:${esc(CONFIG.email)}">${esc(CONFIG.email)}</a></dd>`:"wanjiaxiang@gmail.com")；
  const [mn,mx]=dayRange();$("f-date").min=mn;$("f-date").max=mx;renderSlots();
  let t="",link="";const a=S.banner_start||"",b=S.banner_end||"";
  if(S.banner_text&&(!a||TODAY>=a)&&(!b||TODAY<=b)){t=S.banner_text;link=S.banner_link||""}
