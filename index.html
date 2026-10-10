@@ -124,6 +124,12 @@ input[type=text],input[type=tel],input[type=date],select,textarea{width:100%;pad
 .chip.back{background:var(--ink);border-color:var(--ink);color:#fff}
 @media(max-width:640px){.grid{grid-template-columns:1fr;gap:10px}.card{flex-direction:row}.card img,.ph{width:96px;height:auto;min-height:104px;flex:none;font-size:34px}.card .b{padding:10px}.card h3{font-size:18px}.card p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin:2px 0 6px}.card .add{padding:8px}.ch{font-size:20px}}
 @media print{body>*:not(#drawer){display:none!important}#drawer{position:static!important;display:block!important;background:none!important}#drawer .panel{max-width:none;height:auto;overflow:visible;padding:0}#drawer .panel>div:first-child,.btn,.nb,.fab,#toast{display:none!important}}
+#pv{position:fixed;inset:0;z-index:25;background:rgba(0,0,0,.5);display:none;justify-content:center;align-items:center}
+#pv.open{display:flex}
+#pv .panel{height:auto;max-height:88vh;max-width:620px;border-radius:10px;margin:16px;overflow:auto}
+.doc h4{font-size:18px;margin:16px 0 4px;color:var(--red)}
+.doc p{margin:4px 0}.doc ul{margin:4px 0 4px 1.3em}
+footer a{color:#f0d9a0}
 </style>
 </head>
 <body>
@@ -157,7 +163,7 @@ input[type=text],input[type=tel],input[type=date],select,textarea{width:100%;pad
 <a class="btn wa" id="c-wa" target="_blank" rel="noopener">WhatsApp 我们</a>
 <a class="btn red" id="map" target="_blank" rel="noopener">在地图上查看</a></div></section>
 
-<footer><p id="foot"></p><p>您提供的资料只用于处理订单和联系取货,不用作其他用途,也不会公开。</p><p id="trial" class="hide">网站试运行中,欢迎提出意见。</p></footer>
+<footer><p id="foot"></p><p>您提供的资料只用于处理订单和联系取货,不用作其他用途,也不会公开。</p><p><a href="#" id="pv-link">隐私政策与个人资料说明</a></p><p id="trial" class="hide">网站试运行中,欢迎提出意见。</p></footer>
 
 <a class="fab" id="wa-fab" target="_blank" rel="noopener">WhatsApp</a>
 <button class="fab" id="fb-fab">意见反馈</button>
@@ -179,14 +185,13 @@ input[type=text],input[type=tel],input[type=date],select,textarea{width:100%;pad
 <div class="radio"><label><input type="radio" name="pay" value="转账" checked> 转账 (DuitNow)</label><label><input type="radio" name="pay" value="店内付款"> 取货时在店里付款</label></div>
 <label for="f-note">备注 (可不填)</label><textarea id="f-note" rows="2"></textarea>
 <p class="small">取货规则:订单保留到取货日期的第二天打烊前。超过期限没来取,店内付款的订单会取消;已转账的会退款并取消。如需延期,请提前 WhatsApp 通知我们。</p>
-<label style="display:flex;gap:8px;align-items:flex-start;font-weight:400"><input type="checkbox" id="f-ok" style="margin-top:8px"> 我已阅读取货与退款规则,并同意店家用我的姓名电话处理订单。</label>
+<label style="display:flex;gap:8px;align-items:flex-start;font-weight:400"><input type="checkbox" id="f-ok" style="margin-top:8px"> <span>我已阅读取货与退款规则和<a href="#" class="pv-open" style="color:var(--red)">隐私政策</a>,并同意店家用我的姓名电话处理订单。</span></label>
 <button class="btn red" id="submit" style="width:100%;margin-top:14px;font-size:19px">提交订单</button>
 </form></div></div>
 <div id="receipt" class="rcpt hide"></div>
 <div id="history" class="rcpt hide"></div>
 </div></div>
 
-  <div id="art"><div class="panel doc"><time id="art-t"></time><h3 id="art-h"></h3><img id="art-i" class="hide" alt="" style="width:100%;max-height:260px;object-fit:cover;margin:6px 0"><div id="art-c" style="white-space:pre-line"></div><div style="margin-top:14px"><button class="btn red" id="art-close">关闭</button></div></div></div>
  
 <div id="pv"><div class="panel doc">
 <h3>📄 隐私政策与个人资料说明</h3>
@@ -234,6 +239,7 @@ const CONFIG={
   heroImage:"",
   signImage:"images/head.png",                     // 首页左边叠在背景上的图片(透明背景 PNG);文件名要和 GitHub 里的一模一样(区分大小写)。找不到图片就不显示
   aboutImages:[],
+  email:"wanjiaxiang@gmail.com",                  // 公开显示在联系资料;不想公开就留 ""
   qrImage:"images/duitnow.png",
   slots:["09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00"],   // 取货时间 (表格 settings 的 pickup_slots 可覆盖,时间里不要有空格)
   scriptUrl:"https://script.google.com/macros/s/AKfycbyILO7lBtx8V3CLWBpufdho6BYOG2cBwvVjcTSuUOIMthrZDasWPUtD8FxT5fyBzAfx/exec",
@@ -315,7 +321,7 @@ function renderSlots(){const sl=list(S.pickup_slots).length?list(S.pickup_slots)
  if([...el.options].some(o=>o.value===keep&&!o.disabled))el.value=keep;else{const f=[...el.options].find(o=>!o.disabled);if(f)el.value=f.value}}
 function renderSettings(){
  const hrs=CONFIG.hours||S.hours_note;
- $("contact-list").innerHTML=`<dt>电话</dt><dd><a href="tel:${esc(CONFIG.phone.replace(/[^\d+]/g,""))}">${esc(CONFIG.phone)}</a></dd><dt>WhatsApp</dt><dd><a href="${wa()}" target="_blank" rel="noopener">${esc(CONFIG.phone)}</a></dd><dt>地址</dt><dd><a href="${esc(mapHref())}" target="_blank" rel="noopener">${esc(CONFIG.address)}</a></dd>`+(hrs?`<dt>营业时间</dt><dd>${esc(CONFIG.hours)}${S.hours_note?(CONFIG.hours?"<br>":"")+"<b>"+esc(S.hours_note)+"</b>":""}</dd>`:"")+(CONFIG.email?`<dt>邮箱</dt><dd><a href="mailto:${esc(CONFIG.email)}">${esc(CONFIG.email)}</a></dd>`:"wanjiaxiang@gmail.com")；
+ $("contact-list").innerHTML=`<dt>电话</dt><dd><a href="tel:${esc(CONFIG.phone.replace(/[^\d+]/g,""))}">${esc(CONFIG.phone)}</a></dd><dt>WhatsApp</dt><dd><a href="${wa()}" target="_blank" rel="noopener">${esc(CONFIG.phone)}</a></dd><dt>地址</dt><dd><a href="${esc(mapHref())}" target="_blank" rel="noopener">${esc(CONFIG.address)}</a></dd>`+(hrs?`<dt>营业时间</dt><dd>${esc(CONFIG.hours)}${S.hours_note?(CONFIG.hours?"<br>":"")+"<b>"+esc(S.hours_note)+"</b>":""}</dd>`:"")+(CONFIG.email?`<dt>邮箱</dt><dd><a href="mailto:${esc(CONFIG.email)}">${esc(CONFIG.email)}</a></dd>`:"");
  const [mn,mx]=dayRange();$("f-date").min=mn;$("f-date").max=mx;renderSlots();
  let t="",link="";const a=S.banner_start||"",b=S.banner_end||"";
  if(S.banner_text&&(!a||TODAY>=a)&&(!b||TODAY<=b)){t=S.banner_text;link=S.banner_link||""}
