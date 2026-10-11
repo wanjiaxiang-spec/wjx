@@ -124,6 +124,7 @@ input[type=text],input[type=tel],input[type=date],select,textarea{width:100%;pad
 .tile.all{background:var(--red);color:#fff}.tile.all span{color:#f3d9d6}
 #chips{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:8px;position:sticky;top:56px;z-index:4;background:var(--ash);padding:8px 0;margin-bottom:12px}
 #chips:empty{display:none}
+#subs:empty{display:none}#subs{margin:-2px 0 10px}
 #chips .chip{flex:none;white-space:nowrap}
 .chip.back{background:var(--ink);border-color:var(--ink);color:#fff}
 @media(max-width:640px){.grid{grid-template-columns:1fr;gap:10px}.card{flex-direction:row}.card img,.ph{width:96px;height:auto;min-height:104px;flex:none;font-size:34px}.card .b{padding:10px}.card h3{font-size:18px}.card p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin:2px 0 6px}.card .add{padding:8px}.ch{font-size:20px}}
@@ -169,6 +170,7 @@ footer a{color:#f0d9a0}
 <section id="products"><div class="wrap"><h2>商品</h2><p class="sub">网上预订,到店自取。选好单位和数量,加入购物车即可。</p>
 <div id="pause" class="pause hide"></div><div id="uses-wrap" class="hide"><p class="fl">我要买:</p><div class="chips" id="uses"></div></div><div class="srch"><input id="q" type="search" placeholder="搜索商品,例如:香、金纸、蜡烛" aria-label="搜索商品" enterkeyhint="search" autocomplete="off"><div id="sug" class="sug hide"></div></div>
 <div class="chips" id="chips"></div>
+<div class="chips" id="subs"></div>
 <div id="feat" class="hide"></div>
 <div class="grid" id="grid"><p class="msg">正在载入商品……</p></div></div></section>
 
@@ -202,7 +204,7 @@ footer a{color:#f0d9a0}
 <label>付款方式</label>
 <div class="radio"><label><input type="radio" name="pay" value="转账" checked> 转账 (DuitNow)</label><label><input type="radio" name="pay" value="店内付款"> 取货时在店里付款</label></div>
 <label for="f-note">备注 (可不填)</label><textarea id="f-note" rows="2"></textarea>
-<p class="small">取货规则:订单保留到取货日期。超过期限没来取,店内付款的订单会取消;已转账的会退款并取消。如需延期,请提前 WhatsApp 通知我们。</p>
+<p class="small">取货规则:订单保留到选择的取货日期隔天打烊前。超过期限没来取,店内付款的订单会取消;已转账的会退款并取消。如需延期,请提前 WhatsApp 通知我们。</p>
 <label style="display:flex;gap:8px;align-items:flex-start;font-weight:400"><input type="checkbox" id="f-ok" style="margin-top:8px"> <span>我已阅读取货与退款规则和<a href="#" class="pv-open" style="color:var(--red)">隐私政策 (Privacy Policy)</a>,并同意店家用我的姓名电话处理订单。</span></label>
 <button class="btn red" id="submit" style="width:100%;margin-top:14px;font-size:19px">提交订单</button>
 </form></div></div>
@@ -212,8 +214,8 @@ footer a{color:#f0d9a0}
 
  
 <div id="pv"><div class="panel doc">
-<h3>📄 隐私政策 / Privacy Policy &amp; 
-
+<h3>📄 隐私政策与个人资料说明 / Privacy Policy 
+  
 <h4>1. 我们收集哪些个人资料?</h4>
 <p>当您在网上下单时,我们仅会收集您主动填写的必要信息:</p>
 <ul><li>您的姓名</li><li>电话号码(WhatsApp)</li><li>取货日期与时间</li></ul>
@@ -224,6 +226,7 @@ footer a{color:#f0d9a0}
 
 <h4>3. 资料会保存多久?</h4>
 <ul><li>您在浏览器中暂存的订单记录仅保存在您的手机或电脑本地,您可以随时清除。</li>
+<li>为方便您再次选购,您的浏览器会在您自己的手机或电脑上记住常加入购物车的商品和最近搜索。这些记录不会上传到我们的系统,您可以随时在页面上清除。</li>
 <li>为了符合马来西亚税务与商业做账要求,店内的实体销售单据将依法妥善存档,绝不会挪作他用。</li></ul>
 
 <h4>4. 资料会被公开或分享给第三方吗?</h4>
@@ -241,6 +244,7 @@ footer a{color:#f0d9a0}
 
 <h4>3. How long is your data kept?</h4>
 <ul><li>Order records saved in your browser are stored only on your own phone or computer, and you can clear them at any time.</li>
+<li>To make re-ordering easier, your browser remembers items you often add to cart and your recent searches on your own phone or computer. These are not uploaded to our system, and you can clear them at any time.</li>
 <li>To comply with Malaysian tax and business accounting requirements, the shop's physical sales documents are properly filed as required by law and will never be used for any other purpose.</li></ul>
 
 <h4>4. Will your data be made public or shared with third parties?</h4>
@@ -325,7 +329,7 @@ async function load(url,sample){if(!url)return sample;const c=new AbortControlle
  try{const r=await fetch(url,{signal:c.signal});if(!r.ok)throw 0;return parseCSV(await r.text())}catch(e){return null}finally{clearTimeout(t)}}
 const list=s=>String(s||"").split(/[,\uff0c、;\s]+/).map(x=>x.trim()).filter(Boolean);
 
-let P=[],S={},cat="",use="",fes="",qs="",hl="",showAll=false,loaded=false,loadFail=false,cart=store.get("wjx_cart",[]);
+let P=[],S={},cat="",use="",fes="",qs="",hl="",sub="",showAll=false,loaded=false,loadFail=false,cart=store.get("wjx_cart",[]);
 const paused=()=>/^(yes|y|是|true)$/i.test(S.pause_orders||"");
 const dayRange=()=>[addD(TODAY,parseInt(S.min_advance_days)||0),addD(TODAY,parseInt(S.max_advance_days)||30)];
 const leadMin=()=>{const v=parseInt(S.lead_minutes);return isNaN(v)?30:v};
@@ -363,10 +367,11 @@ function renderSettings(){
  const p=$("pause");p.textContent=S.pause_message||"暂时停止接单,请直接 WhatsApp 询问我们。";p.classList.toggle("hide",!paused())}
 
 function group(rows){const m=new Map();let last={};
- rows.forEach(r=>{if(r.name)last={name:r.name,category:r.category,use:r.use,description:r.description,image:r.image,featured:r.featured};else if(last.name)r={...r,name:last.name,category:last.category,use:last.use,description:last.description,image:last.image,featured:r.featured||last.featured};
+ rows.forEach(r=>{if(r.name)last={name:r.name,category:r.category,use:r.use,description:r.description,image:r.image,featured:r.featured,subcategory:r.subcategory};else if(last.name)r={...r,subcategory:r.subcategory||last.subcategory,name:last.name,category:last.category,use:last.use,description:last.description,image:last.image,featured:r.featured||last.featured};
   const st=r.status||"上架";if(st==="下架"||!r.name)return;
-  if(!m.has(r.name))m.set(r.name,{name:r.name,cat:r.category,use:r.use,desc:r.description,img:r.image,feat:false,v:[]});
-  const g=m.get(r.name);g.cat=g.cat||r.category;g.use=g.use||r.use;g.desc=g.desc||r.description;g.img=g.img||r.image;if(/^(yes|y|是|true|1)$/i.test(String(r.featured||"").trim()))g.feat=true;
+  const cs=String(r.category||"").trim().split(/\s*[\/／>]\s*/),cc=cs[0],ss=String(r.subcategory||cs[1]||"").trim();   // 子分类:可写在 subcategory 栏,也可以在分类里写成「烧纸/金银纸」
+  if(!m.has(r.name))m.set(r.name,{name:r.name,cat:cc,sub:ss,use:r.use,desc:r.description,img:r.image,feat:false,v:[]});
+  const g=m.get(r.name);g.cat=g.cat||cc;g.sub=g.sub||ss;g.use=g.use||r.use;g.desc=g.desc||r.description;g.img=g.img||r.image;if(/^(yes|y|是|true|1)$/i.test(String(r.featured||"").trim()))g.feat=true;
   const pc=cents(r.price);
   g.v.push({id:(r.id||"").trim()||r.name+"|"+(r.unit||""),unit:r.unit,price:pc/100,pc,np:pc<=0,out:st==="缺货"})});
  return [...m.values()].map(g=>({...g,sel:Math.max(0,g.v.findIndex(u=>!u.out&&!u.np))}))}
@@ -382,6 +387,7 @@ function renderProducts(){
  const byUse=P.map((x,i)=>[x,i]).filter(([x])=>okTag(x,use)&&okTag(x,fes)&&okQ(x));
  const cats=[...new Set(byUse.map(([x])=>x.cat).filter(Boolean))];
  const tiles=!cat&&!use&&!fes&&!showAll&&!qs;
+ $("subs").innerHTML="";
  {const fe=$("feat"),fq=store.get("wjx_freq",{}),ok=x=>x.v.some(k=>!k.out&&!k.np);
   let F=tiles?P.filter(x=>fq[x.name]>0&&ok(x)).sort((m,n)=>fq[n.name]-fq[m.name]).slice(0,6):[],ttl="您常买的商品",mine=F.length>0;
   if(tiles&&!F.length){F=P.filter(x=>x.feat&&ok(x));ttl="常用商品"}   // 新顾客还没有记录时,才显示店家在表格里标记的常用商品(没标记就不显示)
@@ -391,6 +397,10 @@ function renderProducts(){
  g.className=tiles?"tiles":"grid";
  if(tiles){g.innerHTML=cats.map(c=>`<button class="tile" data-c="${esc(c)}"><b>${esc(c)}</b><span>${byUse.filter(([x])=>x.cat===c).length} 款</span></button>`).join("")+`<button class="tile all" data-c="__all"><b>全部商品</b><span>${byUse.length} 款</span></button>`;return}
  let rows=byUse.filter(([x])=>!cat||x.cat===cat);
+ {const subs=cat?[...new Set(rows.map(([x])=>x.sub).filter(Boolean))]:[],hasNone=subs.length>0&&rows.some(([x])=>!x.sub);
+  if(sub&&sub!=="__none"&&!subs.includes(sub))sub="";
+  $("subs").innerHTML=subs.length?[["","全部"],...subs.map(v=>[v,v]),...(hasNone?[["__none","其他"]]:[])].map(([v,l])=>`<button class="chip${sub===v?" on":""}" data-s="${esc(v)}">${esc(l)}</button>`).join(""):"";
+  if(sub&&subs.length)rows=rows.filter(([x])=>sub==="__none"?!x.sub:x.sub===sub)}
  if(!cat)rows=[...new Set(rows.map(([x])=>x.cat||""))].flatMap(c=>rows.filter(([x])=>(x.cat||"")===c));
  if(hl)rows=[...rows].sort((m,n)=>(n[0].name===hl)-(m[0].name===hl));
  let lastc=null;
@@ -400,7 +410,7 @@ function renderProducts(){
   const pills=x.v.length>1?`<select class="sel" data-g="${i}" aria-label="选择单位">${x.v.map((k,j)=>`<option value="${j}"${j===x.sel?" selected":""}${k.out||k.np?" disabled":""}>${esc(k.unit||"每件")} · ${k.np?"询价":money(k.price)}${k.out?"(缺货)":""}</option>`).join("")}</select>`:(x.v[0].unit?`<p class="unit">单位:${esc(x.v[0].unit)}</p>`:"");
   const img=x.img?`<img src="${esc(x.img)}" alt="${esc(x.name)}" loading="lazy">`:`<div class="ph" aria-hidden="true">香</div>`;
   const dis=u.out||u.np||paused(),lab=paused()?"暂停接单":u.out?"暂时缺货":u.np?"请 WhatsApp 询价":"加入购物车";
-  const ut=list(x.use).filter(u=>u!=="通用").join("、"),tag=esc(x.cat)+(ut?" · "+esc(ut):"");
+  const ut=list(x.use).filter(u=>u!=="通用").join("、"),tag=esc(x.cat)+(x.sub?" · "+esc(x.sub):"")+(ut?" · "+esc(ut):"");
   return hd+`<article class="card${off?" off":""}${x.name===hl?" hl":""}">${img}<div class="b"><span class="cat">${tag}</span><h3>${esc(x.name)}</h3><p>${esc(x.desc)}</p>${pills}<div class="price">${u.np?"请询价":money(u.price)}</div><button class="add" data-add="${esc(u.id)}" ${dis?"disabled":""}>${lab}</button></div></article>`}).join(""):(qs?`<p class="msg">没有找到「${esc(qs)}」。换个关键词试试,或 <a href="${wa("你好,我想找:"+qs)}" target="_blank" rel="noopener">WhatsApp 询问我们</a>。</p>`:'<p class="msg">这个分类暂时没有商品。</p>')}
 const bump=(n,w)=>{if(!n)return;const f=store.get("wjx_freq",{});f[n]=(f[n]||0)+w;store.set("wjx_freq",f)};
 const recents=()=>store.get("wjx_rs",[]);
@@ -408,17 +418,18 @@ const addRecent=q=>{q=q.trim();if(!q)return;store.set("wjx_rs",[q,...recents().f
 let sg=[];
 const sugg=q=>{q=q.trim().toLowerCase();if(!q)return[];const ws=q.split(/\s+/).filter(Boolean),out=[];
  [...new Set(P.map(x=>x.cat).filter(Boolean))].forEach(c=>{if(c.toLowerCase().includes(q))out.push({t:"c",c,label:c,sub:"分类",sc:c.toLowerCase().startsWith(q)?6:3})});
- P.forEach(x=>{const n=x.name.toLowerCase(),h=(x.name+" "+(x.desc||"")+" "+(x.cat||"")+" "+(x.use||"")).toLowerCase();if(!ws.every(w=>h.includes(w)))return;out.push({t:"p",c:x.cat||"",name:x.name,label:x.name,sub:x.cat||"",sc:n.startsWith(q)?5:n.includes(q)?4:1})});
+ {const seen={};P.forEach(x=>{if(x.sub&&x.cat&&x.sub.toLowerCase().includes(q)&&!seen[x.cat+"/"+x.sub]){seen[x.cat+"/"+x.sub]=1;out.push({t:"s",c:x.cat,s:x.sub,label:x.sub,sub:x.cat+" · 子分类",sc:x.sub.toLowerCase().startsWith(q)?6:3})}})}
+ P.forEach(x=>{const n=x.name.toLowerCase(),h=(x.name+" "+(x.desc||"")+" "+(x.cat||"")+" "+(x.use||"")).toLowerCase();if(!ws.every(w=>h.includes(w)))return;out.push({t:"p",c:x.cat||"",name:x.name,label:x.name,sub:(x.cat||"")+(x.sub?" · "+x.sub:""),sc:n.startsWith(q)?5:n.includes(q)?4:1})});
  return out.sort((a,b)=>b.sc-a.sc).slice(0,8)};
 function showSug(){const el=$("sug"),q=$("q").value.trim();
  if(!q){const r=recents();sg=[];el.innerHTML=r.length?`<div class="sg-h">最近搜索</div>`+r.map(x=>`<button type="button" data-rq="${esc(x)}">${esc(x)}</button>`).join(""):"";el.classList.toggle("hide",!r.length);return}
  sg=sugg(q);
  el.innerHTML=sg.length?sg.map((x,i)=>`<button type="button" data-sg="${i}"><span>${esc(x.label)}</span><small>${esc(x.sub)}</small></button>`).join(""):`<div class="sg-none">没有找到「${esc(q)}」。换个关键词试试,或 <a href="${wa("你好,我想找:"+q)}" target="_blank" rel="noopener">WhatsApp 询问我们</a>。</div>`;
  el.classList.remove("hide")}
-function goSug(x){addRecent($("q").value);$("sug").classList.add("hide");use=fes=qs="";showAll=!x.c;cat=x.c||"";hl=x.t==="p"?x.name:"";renderProducts();$("products").scrollIntoView({behavior:"smooth"})}
+function goSug(x){addRecent($("q").value);$("sug").classList.add("hide");use=fes=qs="";showAll=!x.c;cat=x.c||"";hl=x.t==="p"?x.name:"";sub=x.t==="s"?x.s:"";renderProducts();$("products").scrollIntoView({behavior:"smooth"})}
 const okQ=x=>{if(!qs)return true;const h=(x.name+" "+(x.desc||"")+" "+(x.cat||"")+" "+(x.use||"")).toLowerCase();return qs.toLowerCase().split(/\s+/).filter(Boolean).every(w=>h.includes(w))};
 const okTag=(x,t)=>!t||!list(x.use).length||list(x.use).includes("通用")||list(x.use).includes(t);
-function setCat(c){if(c==="__back"){cat=use=fes=qs=hl="";$("q").value="";showAll=false}else if(c==="__all"){showAll=true;cat=""}else{const T=c!=="通用"&&P.some(x=>list(x.use).includes(c));if(T&&(c==="拜神"||c==="拜祖先")){use=c;cat=""}else if(T){fes=c;cat=""}else cat=c==="全部"?"":c}renderProducts();$("products").scrollIntoView({behavior:"smooth"})}
+function setCat(c){sub="";if(c!=="__back"&&/[\/／>]/.test(c)){const p=c.split(/\s*[\/／>]\s*/);c=p[0];sub=p[1]||""}if(c==="__back"){cat=use=fes=qs=hl="";$("q").value="";showAll=false}else if(c==="__all"){showAll=true;cat=""}else{const T=c!=="通用"&&P.some(x=>list(x.use).includes(c));if(T&&(c==="拜神"||c==="拜祖先")){use=c;cat=""}else if(T){fes=c;cat=""}else cat=c==="全部"?"":c}renderProducts();$("products").scrollIntoView({behavior:"smooth"})}
 function setUse(u){use=u==="全部"?"":u;cat="";renderProducts()}
 
 function renderNews(l){const n=$("news-list");
@@ -512,7 +523,7 @@ function receipt(o){
  ${o.note?`<p class="small">备注:${esc(o.note)}</p>`:""}${qr}${proofHTML(o)}
  <a class="btn wa" style="width:100%;text-align:center" href="${wa(txt)}" target="_blank" rel="noopener">发送订单到 WhatsApp</a>
  <button type="button" class="btn" style="width:100%;margin-top:8px;color:var(--ink);border-color:#999" onclick="window.print()">下载订单确认 (存成 PDF)</button>
- <p class="small">取货时请报订单编号和电话后四位。订单保留到取货日期的第二天打烊前。请截图保存本页。</p>`;
+ <p class="small">取货时请报订单编号和电话后四位。订单保留到选择的取货日期隔天打烊前。请截图保存本页。</p>`;
  $("cartview").classList.add("hide");$("receipt").classList.remove("hide");$("drawer").querySelector(".panel").scrollTop=0}
 
 /* 我的订单(只存在这台设备的浏览器里) */
@@ -539,6 +550,7 @@ document.addEventListener("click",e=>{const t=e.target;
  {const bc=t.closest("#banner .bn");if(bc&&bc.dataset.link){setCat(bc.dataset.link);location.hash="#products"}}
  {const tc=t.closest("[data-c]");if(tc)setCat(tc.dataset.c)}
  if(t.dataset.u!==undefined)setUse(t.dataset.u);
+ if(t.dataset.s!==undefined){sub=t.dataset.s;renderProducts()}
  if(t.dataset.v){P[t.dataset.g].sel=+t.dataset.v;renderProducts()}
  if(t.dataset.add){{const fr=find(t.dataset.add);if(fr)bump(fr.g.name,1)}const c=cart.find(x=>x.id===t.dataset.add);c?c.q=Math.min(99,c.q+1):cart.push({id:t.dataset.add,q:1});sv();toast("已加入购物车")}
  if(t.dataset.q){const c=cart.find(x=>x.id===t.dataset.q);if(c){c.q=Math.min(99,c.q+(+t.dataset.d));if(c.q<1)cart=cart.filter(x=>x!==c)}sv();renderCart()}
