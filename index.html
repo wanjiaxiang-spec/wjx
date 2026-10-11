@@ -135,6 +135,12 @@ input[type=text],input[type=tel],input[type=date],select,textarea{width:100%;pad
 .doc h4{font-size:18px;margin:16px 0 4px;color:var(--red)}
 .doc p{margin:4px 0}.doc ul{margin:4px 0 4px 1.3em}
 footer a{color:#f0d9a0}
+.card img:not(.ph),#about-imgs img{cursor:zoom-in}
+#lb{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;cursor:zoom-out}
+#lb.hide{display:none!important}
+#lb img{max-width:100%;max-height:82vh;width:auto;height:auto;object-fit:contain;border:0;background:#fff}
+#lb p{color:#fff;margin:10px 0 0;font-size:16px;text-align:center}
+#lb button{position:absolute;top:8px;right:14px;font-size:38px;line-height:1;color:#fff;background:none;border:0;cursor:pointer;padding:4px 10px}
 .srch{position:relative}
 .sug{position:absolute;left:0;right:0;top:calc(100% - 10px);background:#fff;border:1px solid #bbb;border-radius:8px;box-shadow:0 6px 16px rgba(0,0,0,.18);z-index:6;max-height:320px;overflow:auto}
 .sug button{display:flex;justify-content:space-between;gap:10px;width:100%;padding:12px 14px;border:0;border-bottom:1px solid #eee;background:#fff;text-align:left;font-size:16px;cursor:pointer}
@@ -213,9 +219,10 @@ footer a{color:#f0d9a0}
 </div></div>
 
  
+<div id="lb" class="hide" role="dialog" aria-label="商品图片"><button type="button" id="lb-x" aria-label="关闭">×</button><img id="lb-i" alt=""><p id="lb-c"></p></div>
 <div id="pv"><div class="panel doc">
-<h3>📄 隐私政策 / Privacy Policy 
-  
+<h3>📄 隐私政策与个人资料说明 / Privacy Policy &amp; Personal Data Notice</h3>
+
 <h4>1. 我们收集哪些个人资料?</h4>
 <p>当您在网上下单时,我们仅会收集您主动填写的必要信息:</p>
 <ul><li>您的姓名</li><li>电话号码(WhatsApp)</li><li>取货日期与时间</li></ul>
@@ -564,9 +571,11 @@ document.addEventListener("click",e=>{const t=e.target;
  if(t.id==="fb-send")sendFb();
  {const sb=t.closest("[data-sg]");if(sb)goSug(sg[+sb.dataset.sg]);const rb=t.closest("[data-rq]");if(rb){$("q").value=rb.dataset.rq;showSug()}if(!t.closest(".srch"))$("sug").classList.add("hide")}
  if(t.dataset.clrfreq&&confirm("清除这台设备上记住的买过的商品和最近搜索吗?")){store.set("wjx_bought",{});store.set("wjx_rs",[]);renderProducts()}
+ if(t.tagName==="IMG"&&(t.closest(".card")||t.closest("#about-imgs"))&&t.getAttribute("src")){$("lb-i").src=t.currentSrc||t.src;$("lb-i").alt=t.alt||"";$("lb-c").textContent=t.alt||"";$("lb").classList.remove("hide")}
+ else if(t.closest("#lb")){$("lb").classList.add("hide");$("lb-i").removeAttribute("src")}
  if(t.closest("#pv-link")||t.closest(".pv-open")){e.preventDefault();$("pv").classList.add("open")}
  if(t.id==="pv-close"||t.id==="pv")$("pv").classList.remove("open")});
-document.addEventListener("keydown",e=>{if(e.key==="Escape")$("pv").classList.remove("open")});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){$("pv").classList.remove("open");$("lb").classList.add("hide")}});
 document.addEventListener("change",e=>{const t=e.target;
  if(t.classList&&t.classList.contains("proof-in")){uploadProof(t);return}
  if(t.classList&&t.classList.contains("sel")){P[t.dataset.g].sel=+t.value;renderProducts()}
