@@ -214,7 +214,7 @@ footer a{color:#f0d9a0}
 
  
 <div id="pv"><div class="panel doc">
-<h3>📄 隐私政策与个人资料说明 / Privacy Policy 
+<h3>📄 隐私政策 / Privacy Policy 
   
 <h4>1. 我们收集哪些个人资料?</h4>
 <p>当您在网上下单时,我们仅会收集您主动填写的必要信息:</p>
@@ -226,7 +226,7 @@ footer a{color:#f0d9a0}
 
 <h4>3. 资料会保存多久?</h4>
 <ul><li>您在浏览器中暂存的订单记录仅保存在您的手机或电脑本地,您可以随时清除。</li>
-<li>为方便您再次选购,您的浏览器会在您自己的手机或电脑上记住常加入购物车的商品和最近搜索。这些记录不会上传到我们的系统,您可以随时在页面上清除。</li>
+<li>为方便您再次选购,您的浏览器会在您自己的手机或电脑上记住您下过单的商品和最近搜索。这些记录不会上传到我们的系统,您可以随时在页面上清除。</li>
 <li>为了符合马来西亚税务与商业做账要求,店内的实体销售单据将依法妥善存档,绝不会挪作他用。</li></ul>
 
 <h4>4. 资料会被公开或分享给第三方吗?</h4>
@@ -244,7 +244,7 @@ footer a{color:#f0d9a0}
 
 <h4>3. How long is your data kept?</h4>
 <ul><li>Order records saved in your browser are stored only on your own phone or computer, and you can clear them at any time.</li>
-<li>To make re-ordering easier, your browser remembers items you often add to cart and your recent searches on your own phone or computer. These are not uploaded to our system, and you can clear them at any time.</li>
+<li>To make re-ordering easier, your browser remembers the items you have ordered and your recent searches on your own phone or computer. These are not uploaded to our system, and you can clear them at any time.</li>
 <li>To comply with Malaysian tax and business accounting requirements, the shop's physical sales documents are properly filed as required by law and will never be used for any other purpose.</li></ul>
 
 <h4>4. Will your data be made public or shared with third parties?</h4>
@@ -367,11 +367,11 @@ function renderSettings(){
  const p=$("pause");p.textContent=S.pause_message||"暂时停止接单,请直接 WhatsApp 询问我们。";p.classList.toggle("hide",!paused())}
 
 function group(rows){const m=new Map();let last={};
- rows.forEach(r=>{if(r.name)last={name:r.name,category:r.category,use:r.use,description:r.description,image:r.image,featured:r.featured,subcategory:r.subcategory};else if(last.name)r={...r,subcategory:r.subcategory||last.subcategory,name:last.name,category:last.category,use:last.use,description:last.description,image:last.image,featured:r.featured||last.featured};
+ rows.forEach(r=>{if(r.name)last={name:r.name,category:r.category,use:r.use,description:r.description,image:r.image,subcategory:r.subcategory};else if(last.name)r={...r,subcategory:r.subcategory||last.subcategory,name:last.name,category:last.category,use:last.use,description:last.description,image:last.image};
   const st=r.status||"上架";if(st==="下架"||!r.name)return;
   const cs=String(r.category||"").trim().split(/\s*[\/／>]\s*/),cc=cs[0],ss=String(r.subcategory||cs[1]||"").trim();   // 子分类:可写在 subcategory 栏,也可以在分类里写成「烧纸/金银纸」
-  if(!m.has(r.name))m.set(r.name,{name:r.name,cat:cc,sub:ss,use:r.use,desc:r.description,img:r.image,feat:false,v:[]});
-  const g=m.get(r.name);g.cat=g.cat||cc;g.sub=g.sub||ss;g.use=g.use||r.use;g.desc=g.desc||r.description;g.img=g.img||r.image;if(/^(yes|y|是|true|1)$/i.test(String(r.featured||"").trim()))g.feat=true;
+  if(!m.has(r.name))m.set(r.name,{name:r.name,cat:cc,sub:ss,use:r.use,desc:r.description,img:r.image,v:[]});
+  const g=m.get(r.name);g.cat=g.cat||cc;g.sub=g.sub||ss;g.use=g.use||r.use;g.desc=g.desc||r.description;g.img=g.img||r.image;
   const pc=cents(r.price);
   g.v.push({id:(r.id||"").trim()||r.name+"|"+(r.unit||""),unit:r.unit,price:pc/100,pc,np:pc<=0,out:st==="缺货"})});
  return [...m.values()].map(g=>({...g,sel:Math.max(0,g.v.findIndex(u=>!u.out&&!u.np))}))}
@@ -388,10 +388,9 @@ function renderProducts(){
  const cats=[...new Set(byUse.map(([x])=>x.cat).filter(Boolean))];
  const tiles=!cat&&!use&&!fes&&!showAll&&!qs;
  $("subs").innerHTML="";
- {const fe=$("feat"),fq=store.get("wjx_freq",{}),ok=x=>x.v.some(k=>!k.out&&!k.np);
-  let F=tiles?P.filter(x=>fq[x.name]>0&&ok(x)).sort((m,n)=>fq[n.name]-fq[m.name]).slice(0,6):[],ttl="您常买的商品",mine=F.length>0;
-  if(tiles&&!F.length){F=P.filter(x=>x.feat&&ok(x));ttl="常用商品"}   // 新顾客还没有记录时,才显示店家在表格里标记的常用商品(没标记就不显示)
-  fe.innerHTML=F.length?`<div class="fh"><h3 class="ch" style="margin:0">${ttl}</h3>${mine?`<button type="button" data-clrfreq="1">清除记录</button>`:""}</div><div class="fscroll">`+F.map(x=>{const u=x.v[x.sel]&&!x.v[x.sel].out&&!x.v[x.sel].np?x.v[x.sel]:x.v.find(k=>!k.out&&!k.np);return `<div class="fcard"><b>${esc(x.name)}</b><span class="small">${esc(u.unit||"")} · ${money(u.price)}</span><button class="add" data-add="${esc(u.id)}" ${paused()?"disabled":""}>${paused()?"暂停接单":"加入购物车"}</button></div>`}).join("")+`</div>`:"";
+ {const fe=$("feat"),fq=store.get("wjx_bought",{}),ok=x=>x.v.some(k=>!k.out&&!k.np);
+  const F=tiles?P.filter(x=>fq[x.name]>0&&ok(x)).sort((m,n)=>fq[n.name]-fq[m.name]).slice(0,12):[];   // 只有这台设备下过单的顾客才会看到;没下过单就不显示
+  fe.innerHTML=F.length?`<div class="fh"><h3 class="ch" style="margin:0">您买过的商品</h3><button type="button" data-clrfreq="1">清除记录</button></div><div class="fscroll">`+F.map(x=>{const u=x.v[x.sel]&&!x.v[x.sel].out&&!x.v[x.sel].np?x.v[x.sel]:x.v.find(k=>!k.out&&!k.np);return `<div class="fcard"><b>${esc(x.name)}</b><span class="small">${esc(u.unit||"")} · ${money(u.price)}</span><button class="add" data-add="${esc(u.id)}" ${paused()?"disabled":""}>${paused()?"暂停接单":"加入购物车"}</button></div>`}).join("")+`</div>`:"";
   fe.classList.toggle("hide",!F.length)}
  $("chips").innerHTML=tiles?"":`<button class="chip back" data-c="__back">← 全部分类</button>`+cats.map(c=>`<button class="chip${c===cat?" on":""}" data-c="${esc(c)}">${esc(c)}</button>`).join("");
  g.className=tiles?"tiles":"grid";
@@ -412,7 +411,7 @@ function renderProducts(){
   const dis=u.out||u.np||paused(),lab=paused()?"暂停接单":u.out?"暂时缺货":u.np?"请 WhatsApp 询价":"加入购物车";
   const ut=list(x.use).filter(u=>u!=="通用").join("、"),tag=esc(x.cat)+(x.sub?" · "+esc(x.sub):"")+(ut?" · "+esc(ut):"");
   return hd+`<article class="card${off?" off":""}${x.name===hl?" hl":""}">${img}<div class="b"><span class="cat">${tag}</span><h3>${esc(x.name)}</h3><p>${esc(x.desc)}</p>${pills}<div class="price">${u.np?"请询价":money(u.price)}</div><button class="add" data-add="${esc(u.id)}" ${dis?"disabled":""}>${lab}</button></div></article>`}).join(""):(qs?`<p class="msg">没有找到「${esc(qs)}」。换个关键词试试,或 <a href="${wa("你好,我想找:"+qs)}" target="_blank" rel="noopener">WhatsApp 询问我们</a>。</p>`:'<p class="msg">这个分类暂时没有商品。</p>')}
-const bump=(n,w)=>{if(!n)return;const f=store.get("wjx_freq",{});f[n]=(f[n]||0)+w;store.set("wjx_freq",f)};
+const bump=(n,w)=>{if(!n)return;const f=store.get("wjx_bought",{});f[n]=(f[n]||0)+w;store.set("wjx_bought",f)};   // 只记「下过单」的商品,存在顾客自己的设备上
 const recents=()=>store.get("wjx_rs",[]);
 const addRecent=q=>{q=q.trim();if(!q)return;store.set("wjx_rs",[q,...recents().filter(x=>x!==q)].slice(0,5))};
 let sg=[];
@@ -492,7 +491,7 @@ async function submit(e){e.preventDefault();
  store.set("wjx_me",{name,phone});
  const ord={no,name,phone,date,slot,pay,note,l:L,total,synced,at,diff:synced&&Math.abs(total-local)>0.005};saveHist(ord);
  receipt(ord);
- L.forEach(x=>bump(x.name,2));
+ L.forEach(x=>bump(x.name,1));
  cart=[];sv();reset();$("f-ok").checked=false}
 
 const orderText=o=>`【${CONFIG.name} 网上订单】\n订单编号:${o.no}\n姓名:${o.name}\n电话:${o.phone}\n取货:${o.date} ${o.slot}\n付款:${o.pay}\n\n`+o.l.map(x=>`${x.name} ${x.unit} x${x.q} (${money(x.sub)})`).join("\n")+`\n\n总额:${money(o.total)}`+(o.note?`\n备注:${o.note}`:"")+(o.pay==="转账"?"\n我会转账后发付款截图。":"\n我会取货时在店里付款。");
@@ -552,7 +551,7 @@ document.addEventListener("click",e=>{const t=e.target;
  if(t.dataset.u!==undefined)setUse(t.dataset.u);
  if(t.dataset.s!==undefined){sub=t.dataset.s;renderProducts()}
  if(t.dataset.v){P[t.dataset.g].sel=+t.dataset.v;renderProducts()}
- if(t.dataset.add){{const fr=find(t.dataset.add);if(fr)bump(fr.g.name,1)}const c=cart.find(x=>x.id===t.dataset.add);c?c.q=Math.min(99,c.q+1):cart.push({id:t.dataset.add,q:1});sv();toast("已加入购物车")}
+ if(t.dataset.add){const c=cart.find(x=>x.id===t.dataset.add);c?c.q=Math.min(99,c.q+1):cart.push({id:t.dataset.add,q:1});sv();toast("已加入购物车")}
  if(t.dataset.q){const c=cart.find(x=>x.id===t.dataset.q);if(c){c.q=Math.min(99,c.q+(+t.dataset.d));if(c.q<1)cart=cart.filter(x=>x!==c)}sv();renderCart()}
  if(t.closest("#cart-btn")||t.id==="hist-back")openCart();
  if(t.closest("#orders-btn"))openHistory();
@@ -564,7 +563,7 @@ document.addEventListener("click",e=>{const t=e.target;
  if(t.id==="fb-close"||t.id==="fb")$("fb").classList.remove("open");
  if(t.id==="fb-send")sendFb();
  {const sb=t.closest("[data-sg]");if(sb)goSug(sg[+sb.dataset.sg]);const rb=t.closest("[data-rq]");if(rb){$("q").value=rb.dataset.rq;showSug()}if(!t.closest(".srch"))$("sug").classList.add("hide")}
- if(t.dataset.clrfreq&&confirm("清除这台设备上记住的常买商品和最近搜索吗?")){store.set("wjx_freq",{});store.set("wjx_rs",[]);renderProducts()}
+ if(t.dataset.clrfreq&&confirm("清除这台设备上记住的买过的商品和最近搜索吗?")){store.set("wjx_bought",{});store.set("wjx_rs",[]);renderProducts()}
  if(t.closest("#pv-link")||t.closest(".pv-open")){e.preventDefault();$("pv").classList.add("open")}
  if(t.id==="pv-close"||t.id==="pv")$("pv").classList.remove("open")});
 document.addEventListener("keydown",e=>{if(e.key==="Escape")$("pv").classList.remove("open")});
